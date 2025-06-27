@@ -6,6 +6,7 @@ from .functions.write_file import schema_write_file, write_file
 from .functions.run_python_file import schema_run_python_file, run_python_file
 from .functions.get_working_directory import schema_get_working_directory, get_working_directory
 from .functions.create_workbook import schema_create_workbook, create_workbook
+from .functions.create_worksheet import schema_create_worksheet, create_worksheet
 
 
 available_functions = types.Tool(
@@ -16,6 +17,7 @@ available_functions = types.Tool(
         schema_run_python_file,
         schema_get_working_directory,
         schema_create_workbook,
+        schema_create_worksheet,
     ]
 )
 
@@ -37,7 +39,8 @@ def call_function(function_call_part, working_directory, verbose=False):
         "write_file": write_file,
         "run_python_file": run_python_file,
         "get_working_directory": get_working_directory,
-        "create_workbook": create_workbook
+        "create_workbook": create_workbook,
+        "create_worksheet": create_worksheet
     }
 
     if function_name not in function_dict:

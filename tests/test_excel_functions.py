@@ -66,3 +66,59 @@ class TestCreateWorkbook:
             # Should either succeed (mkdir -p works) or fail gracefully
             # Both outcomes are acceptable for this edge case
             assert isinstance(response, str)  # Just ensure we get a string response
+
+
+class TestCreateWorksheet:
+    """Test create_worksheet function with Staffer security."""
+
+    def test_create_worksheet_success(self):
+        """Test creating worksheet in existing workbook."""
+        with tempfile.TemporaryDirectory() as temp_dir:
+            # First create a workbook
+            workbook_path = "test_workbook.xlsx"
+            fc_wb = function_call("create_workbook", {"filepath": workbook_path})
+            call_function(fc_wb.parts[0].function_call, temp_dir)
+            
+            # Now add a worksheet
+            sheet_name = "NewSheet"
+            fc = function_call("create_worksheet", {"filepath": workbook_path, "sheet_name": sheet_name})
+            result = call_function(fc.parts[0].function_call, temp_dir)
+            
+            # Check result structure
+            assert result.role == "tool"
+            assert result.parts[0].function_response.name == "create_worksheet"
+            response = result.parts[0].function_response.response["result"]
+            
+            # Should succeed and mention sheet creation
+            assert "created" in response.lower() or "added" in response.lower()
+
+    def test_create_worksheet_security_violation(self):
+        """Test that create_worksheet prevents directory traversal."""
+        with tempfile.TemporaryDirectory() as temp_dir:
+            # Try to access file outside working directory
+            workbook_path = "../outside_workbook.xlsx"
+            sheet_name = "TestSheet"
+            
+            fc = function_call("create_worksheet", {"filepath": workbook_path, "sheet_name": sheet_name})
+            result = call_function(fc.parts[0].function_call, temp_dir)
+            
+            response = result.parts[0].function_response.response["result"]
+            
+            # Should fail with security error
+            assert "Error:" in response
+            assert "outside the permitted working directory" in response
+
+    def test_create_worksheet_nonexistent_workbook(self):
+        """Test create_worksheet with nonexistent workbook file."""
+        with tempfile.TemporaryDirectory() as temp_dir:
+            # Try to add sheet to nonexistent workbook
+            workbook_path = "nonexistent.xlsx"
+            sheet_name = "TestSheet"
+            
+            fc = function_call("create_worksheet", {"filepath": workbook_path, "sheet_name": sheet_name})
+            result = call_function(fc.parts[0].function_call, temp_dir)
+            
+            response = result.parts[0].function_response.response["result"]
+            
+            # Should handle gracefully with error message
+            assert "Error:" in response
