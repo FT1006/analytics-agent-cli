@@ -1,6 +1,6 @@
-# Staffer - AI in Folders
+# Analytic Agent CLI - AI Analytics in Folders
 
-AI that works in whatever folder you're in. Just `cd` to any project and talk to AI about your code.
+AI that works in whatever folder you're in. Just `cd` to any project and talk to AI about your data.
 
 ## Quick Start
 
@@ -8,8 +8,8 @@ Get a free API key at [Google AI Studio](https://aistudio.google.com/app/apikey)
 
 ```bash
 # Install
-git clone https://github.com/FT1006/staffer.git
-cd staffer
+git clone https://github.com/FT1006/analytic-agent-cli.git
+cd analytic-agent-cli
 pip install -e .
 
 # Set your API key
@@ -30,8 +30,8 @@ staffer "add error handling to main.py"
 ## How it works
 
 - **AI knows your folder** - Understands what's in your current directory
-- **Reads and writes files** - Can view and modify files in your folder
-- **Runs code** - Executes Python scripts when needed
+- **Reads and writes files** - Can view and modify Excel files and data in your folder
+- **Analyzes data** - Performs analytics and creates insights from your datasets
 - **Remembers conversations** - Picks up where you left off
 - **Adapts to folder changes** - Asks if you want to continue or start fresh when you switch projects
 - **Enhanced terminal UI** - Rich prompts, command history, and syntax highlighting
@@ -46,33 +46,13 @@ staffer "add error handling to main.py"
 - **Arrow key history** - Use ↑↓ to navigate through previous commands
 - **Persistent history** - Command history saved across sessions
 
-## How UI works
-
-- **Rich prompts** - Shows `staffer ~/project [5 msgs]>` with context
-- **Visual feedback** - ✅ success messages, ⚠️ warnings, ❌ errors
-- **Processing indicators** - Spinners show when AI is thinking
-- **Syntax highlighting** - Code in responses gets proper colors
-- **Function indicators** - See when AI calls functions like `🔧 Calling get_files_info...`
-- **Auto-fallback** - Works in any terminal, enhanced when dependencies available
-
-## ✨ Interactive Features
-
-**Enhanced Terminal Experience:**
-
-- 🎨 **Syntax highlighting** for code output
-- 📝 **Rich context prompts** showing current directory and message count
-- ⬆️ **Command history** with arrow key navigation (persistent across sessions)
-- ⚡ **Visual feedback** with spinners and progress indicators
-- 🎯 **Function call indicators** showing what AI is doing
-- 🛡️ **Graceful fallback** to basic mode if dependencies are missing
-
 **Terminal Dependencies (optional):**
 
 ```bash
 pip install prompt-toolkit rich yaspin
 ```
 
-If not installed, Staffer automatically falls back to basic terminal mode.
+If not installed, Analytic Agent CLI automatically falls back to basic terminal mode.
 
 ## Examples
 
@@ -80,7 +60,7 @@ If not installed, Staffer automatically falls back to basic terminal mode.
 # Start interactive chat in any folder (default)
 cd ~/my-python-project
 staffer
-# 🚀 Staffer - AI in Folders
+# 🚀 Analytic Agent CLI - AI Analytics in Folders
 # Enhanced terminal mode enabled
 staffer ~/my-python-project [0 msgs]> what's in this folder?
 # 🔧 Calling get_files_info...
@@ -100,7 +80,7 @@ staffer "add tests for the main functions"
 # Switch folders, AI adapts automatically
 cd ~/my-data-project
 staffer
-# Staffer notices you changed folders
+# Analytic Agent CLI notices you changed folders
 Directory changed from ~/my-web-app to ~/my-data-project
 [N] Start new session  [K] Keep old session
 Choice (N/k): n
@@ -128,4 +108,4 @@ which staffer      # Check if in PATH
 staffer --help
 ```
 
-That's it! AI that understands your folders and helps with your code.
+That's it! AI that understands your folders and helps with your data.

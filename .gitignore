@@ -1,4 +1,8 @@
-# Ignore existing CLAUDE.md files during clone
 CLAUDE.md
 function_bank/
 next_function/
+docs/
+staffer/functions/excel/server.py
+staffer/functions/excel/__main__.py
+staffer/functions/mcp_server/
+.gitignore
