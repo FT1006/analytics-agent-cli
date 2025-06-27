@@ -10,6 +10,14 @@ from .functions.create_worksheet import schema_create_worksheet, create_workshee
 from .functions.get_workbook_metadata import schema_get_workbook_metadata, get_workbook_metadata
 from .functions.rename_worksheet import schema_rename_worksheet, rename_worksheet
 from .functions.delete_worksheet import schema_delete_worksheet, delete_worksheet
+from .functions.read_data_from_excel import schema_read_data_from_excel, read_data_from_excel
+from .functions.write_data_to_excel import schema_write_data_to_excel, write_data_to_excel
+from .functions.copy_worksheet import schema_copy_worksheet, copy_worksheet
+from .functions.validate_excel_range import schema_validate_excel_range, validate_excel_range
+from .functions.merge_cells import schema_merge_cells, merge_cells
+from .functions.unmerge_cells import schema_unmerge_cells, unmerge_cells
+from .functions.copy_range import schema_copy_range, copy_range
+from .functions.delete_range import schema_delete_range, delete_range
 
 
 available_functions = types.Tool(
@@ -24,6 +32,14 @@ available_functions = types.Tool(
         schema_get_workbook_metadata,
         schema_rename_worksheet,
         schema_delete_worksheet,
+        schema_read_data_from_excel,
+        schema_write_data_to_excel,
+        schema_copy_worksheet,
+        schema_validate_excel_range,
+        schema_merge_cells,
+        schema_unmerge_cells,
+        schema_copy_range,
+        schema_delete_range,
     ]
 )
 
@@ -49,7 +65,15 @@ def call_function(function_call_part, working_directory, verbose=False):
         "create_worksheet": create_worksheet,
         "get_workbook_metadata": get_workbook_metadata,
         "rename_worksheet": rename_worksheet,
-        "delete_worksheet": delete_worksheet
+        "delete_worksheet": delete_worksheet,
+        "read_data_from_excel": read_data_from_excel,
+        "write_data_to_excel": write_data_to_excel,
+        "copy_worksheet": copy_worksheet,
+        "validate_excel_range": validate_excel_range,
+        "merge_cells": merge_cells,
+        "unmerge_cells": unmerge_cells,
+        "copy_range": copy_range,
+        "delete_range": delete_range
     }
 
     if function_name not in function_dict:
