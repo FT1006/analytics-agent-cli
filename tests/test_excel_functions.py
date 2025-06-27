@@ -1288,3 +1288,418 @@ class TestDeleteRange:
             # Should fail with security error
             assert "Error:" in response
             assert "outside the permitted working directory" in response
+
+
+class TestFormatRange:
+    """Test format_range function."""
+
+    def test_format_range_success(self):
+        """Test formatting range with basic options."""
+        with tempfile.TemporaryDirectory() as temp_dir:
+            # Create workbook and write some data
+            workbook_path = "test_workbook.xlsx"
+            fc_wb = function_call("create_workbook", {"filepath": workbook_path})
+            call_function(fc_wb.parts[0].function_call, temp_dir)
+            
+            # Write test data
+            fc_write = function_call("write_data_to_excel", {
+                "filepath": workbook_path,
+                "sheet_name": "Sheet",
+                "data": [["A1", "B1"], ["A2", "B2"]],
+                "start_cell": "A1"
+            })
+            call_function(fc_write.parts[0].function_call, temp_dir)
+            
+            # Format range
+            fc = function_call("format_range", {
+                "filepath": workbook_path,
+                "sheet_name": "Sheet",
+                "start_cell": "A1",
+                "end_cell": "B2",
+                "bold": True,
+                "italic": True,
+                "font_size": 12
+            })
+            result = call_function(fc.parts[0].function_call, temp_dir)
+            
+            # Check result
+            assert result.role == "tool"
+            assert result.parts[0].function_response.name == "format_range"
+            response = result.parts[0].function_response.response["result"]
+            
+            # Should succeed
+            assert "formatted" in response.lower()
+
+    def test_format_range_security_violation(self):
+        """Test that format_range prevents directory traversal."""
+        with tempfile.TemporaryDirectory() as temp_dir:
+            fc = function_call("format_range", {
+                "filepath": "../outside.xlsx",
+                "sheet_name": "Sheet",
+                "start_cell": "A1",
+                "end_cell": "B2",
+                "bold": True
+            })
+            result = call_function(fc.parts[0].function_call, temp_dir)
+            
+            response = result.parts[0].function_response.response["result"]
+            
+            # Should fail with security error
+            assert "Error:" in response
+            assert "outside the permitted working directory" in response
+
+    def test_format_range_nonexistent_file(self):
+        """Test format_range with nonexistent file."""
+        with tempfile.TemporaryDirectory() as temp_dir:
+            fc = function_call("format_range", {
+                "filepath": "nonexistent.xlsx",
+                "sheet_name": "Sheet",
+                "start_cell": "A1",
+                "bold": True
+            })
+            result = call_function(fc.parts[0].function_call, temp_dir)
+            
+            response = result.parts[0].function_response.response["result"]
+            
+            # Should fail gracefully
+            assert "Error:" in response
+
+    def test_format_range_invalid_range(self):
+        """Test format_range with invalid cell range."""
+        with tempfile.TemporaryDirectory() as temp_dir:
+            # Create workbook
+            workbook_path = "test_workbook.xlsx"
+            fc_wb = function_call("create_workbook", {"filepath": workbook_path})
+            call_function(fc_wb.parts[0].function_call, temp_dir)
+            
+            # Try invalid range
+            fc = function_call("format_range", {
+                "filepath": workbook_path,
+                "sheet_name": "Sheet",
+                "start_cell": "INVALID",
+                "bold": True
+            })
+            result = call_function(fc.parts[0].function_call, temp_dir)
+            
+            response = result.parts[0].function_response.response["result"]
+            
+            # Should fail gracefully
+            assert "Error:" in response
+
+
+class TestCreateTable:
+    """Test create_table function."""
+
+    def test_create_table_success(self):
+        """Test creating table from data range."""
+        with tempfile.TemporaryDirectory() as temp_dir:
+            # Create workbook and write some data
+            workbook_path = "test_workbook.xlsx"
+            fc_wb = function_call("create_workbook", {"filepath": workbook_path})
+            call_function(fc_wb.parts[0].function_call, temp_dir)
+            
+            # Write test data with headers
+            fc_write = function_call("write_data_to_excel", {
+                "filepath": workbook_path,
+                "sheet_name": "Sheet",
+                "data": [["Name", "Age"], ["John", 30], ["Jane", 25]],
+                "start_cell": "A1"
+            })
+            call_function(fc_write.parts[0].function_call, temp_dir)
+            
+            # Create table
+            fc = function_call("create_table", {
+                "filepath": workbook_path,
+                "sheet_name": "Sheet",
+                "table_name": "MyTable",
+                "data_range": "A1:B3"
+            })
+            result = call_function(fc.parts[0].function_call, temp_dir)
+            
+            # Check result
+            assert result.role == "tool"
+            assert result.parts[0].function_response.name == "create_table"
+            response = result.parts[0].function_response.response["result"]
+            
+            # Should succeed
+            assert "table" in response.lower()
+
+    def test_create_table_security_violation(self):
+        """Test that create_table prevents directory traversal."""
+        with tempfile.TemporaryDirectory() as temp_dir:
+            fc = function_call("create_table", {
+                "filepath": "../outside.xlsx",
+                "sheet_name": "Sheet",
+                "table_name": "MyTable",
+                "data_range": "A1:B3"
+            })
+            result = call_function(fc.parts[0].function_call, temp_dir)
+            
+            response = result.parts[0].function_response.response["result"]
+            
+            # Should fail with security error
+            assert "Error:" in response
+            assert "outside the permitted working directory" in response
+
+    def test_create_table_nonexistent_file(self):
+        """Test create_table with nonexistent file."""
+        with tempfile.TemporaryDirectory() as temp_dir:
+            fc = function_call("create_table", {
+                "filepath": "nonexistent.xlsx",
+                "sheet_name": "Sheet",
+                "table_name": "MyTable",
+                "data_range": "A1:B3"
+            })
+            result = call_function(fc.parts[0].function_call, temp_dir)
+            
+            response = result.parts[0].function_response.response["result"]
+            
+            # Should fail gracefully
+            assert "Error:" in response
+
+    def test_create_table_invalid_range(self):
+        """Test create_table with invalid data range."""
+        with tempfile.TemporaryDirectory() as temp_dir:
+            # Create workbook
+            workbook_path = "test_workbook.xlsx"
+            fc_wb = function_call("create_workbook", {"filepath": workbook_path})
+            call_function(fc_wb.parts[0].function_call, temp_dir)
+            
+            # Try invalid range
+            fc = function_call("create_table", {
+                "filepath": workbook_path,
+                "sheet_name": "Sheet",
+                "table_name": "MyTable",
+                "data_range": "INVALID:RANGE"
+            })
+            result = call_function(fc.parts[0].function_call, temp_dir)
+            
+            response = result.parts[0].function_response.response["result"]
+            
+            # Should fail gracefully
+            assert "Error:" in response
+
+
+class TestCreateChart:
+    """Test create_chart function."""
+
+    def test_create_chart_success(self):
+        """Test creating chart from data range."""
+        with tempfile.TemporaryDirectory() as temp_dir:
+            # Create workbook and write some data
+            workbook_path = "test_workbook.xlsx"
+            fc_wb = function_call("create_workbook", {"filepath": workbook_path})
+            call_function(fc_wb.parts[0].function_call, temp_dir)
+            
+            # Write test data
+            fc_write = function_call("write_data_to_excel", {
+                "filepath": workbook_path,
+                "sheet_name": "Sheet",
+                "data": [["Month", "Sales"], ["Jan", 100], ["Feb", 150], ["Mar", 200]],
+                "start_cell": "A1"
+            })
+            call_function(fc_write.parts[0].function_call, temp_dir)
+            
+            # Create chart
+            fc = function_call("create_chart", {
+                "filepath": workbook_path,
+                "sheet_name": "Sheet",
+                "data_range": "A1:B4",
+                "chart_type": "column",
+                "target_cell": "D2",
+                "title": "Sales Chart"
+            })
+            result = call_function(fc.parts[0].function_call, temp_dir)
+            
+            # Check result
+            assert result.role == "tool"
+            assert result.parts[0].function_response.name == "create_chart"
+            response = result.parts[0].function_response.response["result"]
+            
+            # Should succeed
+            assert "chart" in response.lower()
+
+    def test_create_chart_security_violation(self):
+        """Test that create_chart prevents directory traversal."""
+        with tempfile.TemporaryDirectory() as temp_dir:
+            fc = function_call("create_chart", {
+                "filepath": "../outside.xlsx",
+                "sheet_name": "Sheet",
+                "data_range": "A1:B4",
+                "chart_type": "column",
+                "target_cell": "D2"
+            })
+            result = call_function(fc.parts[0].function_call, temp_dir)
+            
+            response = result.parts[0].function_response.response["result"]
+            
+            # Should fail with security error
+            assert "Error:" in response
+            assert "outside the permitted working directory" in response
+
+    def test_create_chart_nonexistent_file(self):
+        """Test create_chart with nonexistent file."""
+        with tempfile.TemporaryDirectory() as temp_dir:
+            fc = function_call("create_chart", {
+                "filepath": "nonexistent.xlsx",
+                "sheet_name": "Sheet",
+                "data_range": "A1:B4",
+                "chart_type": "column",
+                "target_cell": "D2"
+            })
+            result = call_function(fc.parts[0].function_call, temp_dir)
+            
+            response = result.parts[0].function_response.response["result"]
+            
+            # Should fail gracefully
+            assert "Error:" in response
+
+    def test_create_chart_invalid_chart_type(self):
+        """Test create_chart with invalid chart type."""
+        with tempfile.TemporaryDirectory() as temp_dir:
+            # Create workbook and data
+            workbook_path = "test_workbook.xlsx"
+            fc_wb = function_call("create_workbook", {"filepath": workbook_path})
+            call_function(fc_wb.parts[0].function_call, temp_dir)
+            
+            fc_write = function_call("write_data_to_excel", {
+                "filepath": workbook_path,
+                "sheet_name": "Sheet",
+                "data": [["A", "B"], [1, 2]],
+                "start_cell": "A1"
+            })
+            call_function(fc_write.parts[0].function_call, temp_dir)
+            
+            # Try invalid chart type
+            fc = function_call("create_chart", {
+                "filepath": workbook_path,
+                "sheet_name": "Sheet",
+                "data_range": "A1:B2",
+                "chart_type": "invalid_type",
+                "target_cell": "D2"
+            })
+            result = call_function(fc.parts[0].function_call, temp_dir)
+            
+            response = result.parts[0].function_response.response["result"]
+            
+            # Should fail gracefully
+            assert "Error:" in response
+
+
+class TestCreatePivotTable:
+    """Test create_pivot_table function."""
+
+    def test_create_pivot_table_success(self):
+        """Test creating pivot table from data range."""
+        with tempfile.TemporaryDirectory() as temp_dir:
+            # Create workbook and write some data
+            workbook_path = "test_workbook.xlsx"
+            fc_wb = function_call("create_workbook", {"filepath": workbook_path})
+            call_function(fc_wb.parts[0].function_call, temp_dir)
+            
+            # Write test data with headers
+            fc_write = function_call("write_data_to_excel", {
+                "filepath": workbook_path,
+                "sheet_name": "Sheet",
+                "data": [
+                    ["Name", "Department", "Salary"], 
+                    ["John", "Sales", 50000], 
+                    ["Jane", "Sales", 60000],
+                    ["Bob", "IT", 70000],
+                    ["Alice", "IT", 65000]
+                ],
+                "start_cell": "A1"
+            })
+            call_function(fc_write.parts[0].function_call, temp_dir)
+            
+            # Create pivot table
+            fc = function_call("create_pivot_table", {
+                "filepath": workbook_path,
+                "sheet_name": "Sheet",
+                "data_range": "A1:C5",
+                "pivot_sheet_name": "PivotSheet",
+                "row_fields": ["Department"],
+                "column_fields": [],
+                "value_fields": ["Salary"]
+            })
+            result = call_function(fc.parts[0].function_call, temp_dir)
+            
+            # Check result
+            assert result.role == "tool"
+            assert result.parts[0].function_response.name == "create_pivot_table"
+            response = result.parts[0].function_response.response["result"]
+            
+            # Should succeed
+            assert "pivot" in response.lower()
+
+    def test_create_pivot_table_security_violation(self):
+        """Test that create_pivot_table prevents directory traversal."""
+        with tempfile.TemporaryDirectory() as temp_dir:
+            fc = function_call("create_pivot_table", {
+                "filepath": "../outside.xlsx",
+                "sheet_name": "Sheet",
+                "data_range": "A1:C5",
+                "pivot_sheet_name": "PivotSheet",
+                "row_fields": ["Department"],
+                "column_fields": [],
+                "value_fields": ["Salary"]
+            })
+            result = call_function(fc.parts[0].function_call, temp_dir)
+            
+            response = result.parts[0].function_response.response["result"]
+            
+            # Should fail with security error
+            assert "Error:" in response
+            assert "outside the permitted working directory" in response
+
+    def test_create_pivot_table_nonexistent_file(self):
+        """Test create_pivot_table with nonexistent file."""
+        with tempfile.TemporaryDirectory() as temp_dir:
+            fc = function_call("create_pivot_table", {
+                "filepath": "nonexistent.xlsx",
+                "sheet_name": "Sheet",
+                "data_range": "A1:C5",
+                "pivot_sheet_name": "PivotSheet",
+                "row_fields": ["Department"],
+                "column_fields": [],
+                "value_fields": ["Salary"]
+            })
+            result = call_function(fc.parts[0].function_call, temp_dir)
+            
+            response = result.parts[0].function_response.response["result"]
+            
+            # Should fail gracefully
+            assert "Error:" in response
+
+    def test_create_pivot_table_invalid_fields(self):
+        """Test create_pivot_table with invalid field names."""
+        with tempfile.TemporaryDirectory() as temp_dir:
+            # Create workbook and data
+            workbook_path = "test_workbook.xlsx"
+            fc_wb = function_call("create_workbook", {"filepath": workbook_path})
+            call_function(fc_wb.parts[0].function_call, temp_dir)
+            
+            fc_write = function_call("write_data_to_excel", {
+                "filepath": workbook_path,
+                "sheet_name": "Sheet",
+                "data": [["Name", "Age"], ["John", 30]],
+                "start_cell": "A1"
+            })
+            call_function(fc_write.parts[0].function_call, temp_dir)
+            
+            # Try invalid field names
+            fc = function_call("create_pivot_table", {
+                "filepath": workbook_path,
+                "sheet_name": "Sheet",
+                "data_range": "A1:B2",
+                "pivot_sheet_name": "PivotSheet",
+                "row_fields": ["NonExistentField"],
+                "column_fields": [],
+                "value_fields": ["Age"]
+            })
+            result = call_function(fc.parts[0].function_call, temp_dir)
+            
+            response = result.parts[0].function_response.response["result"]
+            
+            # Should fail gracefully
+            assert "Error:" in response

@@ -21,6 +21,10 @@ from .functions.delete_range import schema_delete_range, delete_range
 from .functions.validate_formula_syntax import schema_validate_formula_syntax, validate_formula_syntax
 from .functions.apply_formula import schema_apply_formula, apply_formula
 from .functions.get_data_validation_info import schema_get_data_validation_info, get_data_validation_info
+from .functions.format_range import schema_format_range, format_range
+from .functions.create_table import schema_create_table, create_table
+from .functions.create_chart import schema_create_chart, create_chart
+from .functions.create_pivot_table import schema_create_pivot_table, create_pivot_table
 
 
 available_functions = types.Tool(
@@ -46,6 +50,10 @@ available_functions = types.Tool(
         schema_validate_formula_syntax,
         schema_apply_formula,
         schema_get_data_validation_info,
+        schema_format_range,
+        schema_create_table,
+        schema_create_chart,
+        schema_create_pivot_table,
     ]
 )
 
@@ -82,7 +90,11 @@ def call_function(function_call_part, working_directory, verbose=False):
         "delete_range": delete_range,
         "validate_formula_syntax": validate_formula_syntax,
         "apply_formula": apply_formula,
-        "get_data_validation_info": get_data_validation_info
+        "get_data_validation_info": get_data_validation_info,
+        "format_range": format_range,
+        "create_table": create_table,
+        "create_chart": create_chart,
+        "create_pivot_table": create_pivot_table
     }
 
     if function_name not in function_dict:
