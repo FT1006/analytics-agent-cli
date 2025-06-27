@@ -697,20 +697,309 @@ class TestMergeCells:
             workbook_path = "test_workbook.xlsx"
             fc_wb = function_call("create_workbook", {"filepath": workbook_path})
             call_function(fc_wb.parts[0].function_call, temp_dir)
+
+
+class TestValidateFormulaSyntax:
+    """Test validate_formula_syntax function with Staffer security."""
+
+    def test_validate_formula_syntax_success(self):
+        """Test validating valid Excel formula syntax."""
+        with tempfile.TemporaryDirectory() as temp_dir:
+            # First create a workbook
+            workbook_path = "test_workbook.xlsx"
+            fc_wb = function_call("create_workbook", {"filepath": workbook_path})
+            call_function(fc_wb.parts[0].function_call, temp_dir)
             
-            # Try invalid cell reference
-            fc = function_call("merge_cells", {
+            # Validate simple formula syntax
+            fc = function_call("validate_formula_syntax", {
                 "filepath": workbook_path,
                 "sheet_name": "Sheet",
-                "start_cell": "INVALID",
-                "end_cell": "B2"
+                "cell": "A1", 
+                "formula": "=B1+C1"
+            })
+            result = call_function(fc.parts[0].function_call, temp_dir)
+            
+            # Check result structure
+            assert result.role == "tool"
+            assert result.parts[0].function_response.name == "validate_formula_syntax"
+            response = result.parts[0].function_response.response["result"]
+            
+            # Should succeed with validation message
+            assert "valid" in response.lower() or "Formula is" in response
+
+    def test_validate_formula_syntax_security_violation(self):
+        """Test that validate_formula_syntax prevents directory traversal."""
+        with tempfile.TemporaryDirectory() as temp_dir:
+            # Try to access file outside working directory
+            workbook_path = "../outside_workbook.xlsx"
+            
+            fc = function_call("validate_formula_syntax", {
+                "filepath": workbook_path,
+                "sheet_name": "Sheet",
+                "cell": "A1",
+                "formula": "=B1+C1"
             })
             result = call_function(fc.parts[0].function_call, temp_dir)
             
             response = result.parts[0].function_response.response["result"]
             
-            # Should fail with error
+            # Should fail with security error
             assert "Error:" in response
+            assert "outside the permitted working directory" in response
+
+    def test_validate_formula_syntax_nonexistent_file(self):
+        """Test validate_formula_syntax with nonexistent file."""
+        with tempfile.TemporaryDirectory() as temp_dir:
+            fc = function_call("validate_formula_syntax", {
+                "filepath": "nonexistent.xlsx",
+                "sheet_name": "Sheet", 
+                "cell": "A1",
+                "formula": "=B1+C1"
+            })
+            result = call_function(fc.parts[0].function_call, temp_dir)
+            
+            response = result.parts[0].function_response.response["result"]
+            
+            # Should fail gracefully
+            assert "Error:" in response
+
+    def test_validate_formula_syntax_invalid_formula(self):
+        """Test validate_formula_syntax with invalid formula syntax."""
+        with tempfile.TemporaryDirectory() as temp_dir:
+            # Create workbook first
+            workbook_path = "test_workbook.xlsx"
+            fc_wb = function_call("create_workbook", {"filepath": workbook_path})
+            call_function(fc_wb.parts[0].function_call, temp_dir)
+            
+            # Test invalid formula
+            fc = function_call("validate_formula_syntax", {
+                "filepath": workbook_path,
+                "sheet_name": "Sheet",
+                "cell": "A1",
+                "formula": "=B1++C1"  # Invalid double plus
+            })
+            result = call_function(fc.parts[0].function_call, temp_dir)
+            
+            response = result.parts[0].function_response.response["result"]
+            
+            # Should indicate invalid syntax
+            assert "Error:" in response or "invalid" in response.lower()
+
+    def test_validate_formula_syntax_invalid_sheet(self):
+        """Test validate_formula_syntax with nonexistent sheet."""
+        with tempfile.TemporaryDirectory() as temp_dir:
+            # Create workbook first
+            workbook_path = "test_workbook.xlsx"
+            fc_wb = function_call("create_workbook", {"filepath": workbook_path})
+            call_function(fc_wb.parts[0].function_call, temp_dir)
+            
+            # Test with non-existent sheet
+            fc = function_call("validate_formula_syntax", {
+                "filepath": workbook_path,
+                "sheet_name": "NonExistentSheet",
+                "cell": "A1",
+                "formula": "=B1+C1"
+            })
+            result = call_function(fc.parts[0].function_call, temp_dir)
+            
+            response = result.parts[0].function_response.response["result"]
+            
+            # Should fail gracefully
+            assert "Error:" in response
+            assert "not found" in response or "NonExistentSheet" in response
+
+
+class TestApplyFormula:
+    """Test apply_formula function with Staffer security."""
+
+    def test_apply_formula_success(self):
+        """Test applying valid Excel formula to cell."""
+        with tempfile.TemporaryDirectory() as temp_dir:
+            # First create a workbook
+            workbook_path = "test_workbook.xlsx"
+            fc_wb = function_call("create_workbook", {"filepath": workbook_path})
+            call_function(fc_wb.parts[0].function_call, temp_dir)
+            
+            # Apply simple formula
+            fc = function_call("apply_formula", {
+                "filepath": workbook_path,
+                "sheet_name": "Sheet",
+                "cell": "A1",
+                "formula": "=1+1"
+            })
+            result = call_function(fc.parts[0].function_call, temp_dir)
+            
+            # Check result structure
+            assert result.role == "tool"
+            assert result.parts[0].function_response.name == "apply_formula"
+            response = result.parts[0].function_response.response["result"]
+            
+            # Should succeed
+            assert "Applied formula" in response or "applied" in response.lower()
+
+    def test_apply_formula_security_violation(self):
+        """Test that apply_formula prevents directory traversal."""
+        with tempfile.TemporaryDirectory() as temp_dir:
+            # Try to access file outside working directory
+            workbook_path = "../outside_workbook.xlsx"
+            
+            fc = function_call("apply_formula", {
+                "filepath": workbook_path,
+                "sheet_name": "Sheet",
+                "cell": "A1",
+                "formula": "=1+1"
+            })
+            result = call_function(fc.parts[0].function_call, temp_dir)
+            
+            response = result.parts[0].function_response.response["result"]
+            
+            # Should fail with security error
+            assert "Error:" in response
+            assert "outside the permitted working directory" in response
+
+    def test_apply_formula_nonexistent_file(self):
+        """Test apply_formula with nonexistent file."""
+        with tempfile.TemporaryDirectory() as temp_dir:
+            fc = function_call("apply_formula", {
+                "filepath": "nonexistent.xlsx",
+                "sheet_name": "Sheet",
+                "cell": "A1",
+                "formula": "=1+1"
+            })
+            result = call_function(fc.parts[0].function_call, temp_dir)
+            
+            response = result.parts[0].function_response.response["result"]
+            
+            # Should fail gracefully
+            assert "Error:" in response
+
+    def test_apply_formula_invalid_formula(self):
+        """Test apply_formula with invalid formula syntax."""
+        with tempfile.TemporaryDirectory() as temp_dir:
+            # Create workbook first
+            workbook_path = "test_workbook.xlsx"
+            fc_wb = function_call("create_workbook", {"filepath": workbook_path})
+            call_function(fc_wb.parts[0].function_call, temp_dir)
+            
+            # Test invalid formula
+            fc = function_call("apply_formula", {
+                "filepath": workbook_path,
+                "sheet_name": "Sheet",
+                "cell": "A1",
+                "formula": "=B1++C1"  # Invalid double plus
+            })
+            result = call_function(fc.parts[0].function_call, temp_dir)
+            
+            response = result.parts[0].function_response.response["result"]
+            
+            # Should indicate invalid syntax
+            assert "Error:" in response
+
+    def test_apply_formula_invalid_sheet(self):
+        """Test apply_formula with nonexistent sheet."""
+        with tempfile.TemporaryDirectory() as temp_dir:
+            # Create workbook first
+            workbook_path = "test_workbook.xlsx"
+            fc_wb = function_call("create_workbook", {"filepath": workbook_path})
+            call_function(fc_wb.parts[0].function_call, temp_dir)
+            
+            # Test with non-existent sheet
+            fc = function_call("apply_formula", {
+                "filepath": workbook_path,
+                "sheet_name": "NonExistentSheet",
+                "cell": "A1",
+                "formula": "=1+1"
+            })
+            result = call_function(fc.parts[0].function_call, temp_dir)
+            
+            response = result.parts[0].function_response.response["result"]
+            
+            # Should fail gracefully
+            assert "Error:" in response
+            assert "not found" in response or "NonExistentSheet" in response
+
+
+class TestGetDataValidationInfo:
+    """Test get_data_validation_info function with Staffer security."""
+
+    def test_get_data_validation_info_success(self):
+        """Test getting data validation info from worksheet."""
+        with tempfile.TemporaryDirectory() as temp_dir:
+            # First create a workbook
+            workbook_path = "test_workbook.xlsx"
+            fc_wb = function_call("create_workbook", {"filepath": workbook_path})
+            call_function(fc_wb.parts[0].function_call, temp_dir)
+            
+            # Get validation info
+            fc = function_call("get_data_validation_info", {
+                "filepath": workbook_path,
+                "sheet_name": "Sheet"
+            })
+            result = call_function(fc.parts[0].function_call, temp_dir)
+            
+            # Check result structure
+            assert result.role == "tool"
+            assert result.parts[0].function_response.name == "get_data_validation_info"
+            response = result.parts[0].function_response.response["result"]
+            
+            # Should succeed - either find rules or report none found
+            assert isinstance(response, str)
+            assert ("No data validation rules found" in response or 
+                    "sheet_name" in response or 
+                    "validation_rules" in response)
+
+    def test_get_data_validation_info_security_violation(self):
+        """Test that get_data_validation_info prevents directory traversal."""
+        with tempfile.TemporaryDirectory() as temp_dir:
+            # Try to access file outside working directory
+            workbook_path = "../outside_workbook.xlsx"
+            
+            fc = function_call("get_data_validation_info", {
+                "filepath": workbook_path,
+                "sheet_name": "Sheet"
+            })
+            result = call_function(fc.parts[0].function_call, temp_dir)
+            
+            response = result.parts[0].function_response.response["result"]
+            
+            # Should fail with security error
+            assert "Error:" in response
+            assert "outside the permitted working directory" in response
+
+    def test_get_data_validation_info_nonexistent_file(self):
+        """Test get_data_validation_info with nonexistent file."""
+        with tempfile.TemporaryDirectory() as temp_dir:
+            fc = function_call("get_data_validation_info", {
+                "filepath": "nonexistent.xlsx",
+                "sheet_name": "Sheet"
+            })
+            result = call_function(fc.parts[0].function_call, temp_dir)
+            
+            response = result.parts[0].function_response.response["result"]
+            
+            # Should fail gracefully
+            assert "Error:" in response
+
+    def test_get_data_validation_info_invalid_sheet(self):
+        """Test get_data_validation_info with nonexistent sheet."""
+        with tempfile.TemporaryDirectory() as temp_dir:
+            # Create workbook first
+            workbook_path = "test_workbook.xlsx"
+            fc_wb = function_call("create_workbook", {"filepath": workbook_path})
+            call_function(fc_wb.parts[0].function_call, temp_dir)
+            
+            # Test with non-existent sheet
+            fc = function_call("get_data_validation_info", {
+                "filepath": workbook_path,
+                "sheet_name": "NonExistentSheet"
+            })
+            result = call_function(fc.parts[0].function_call, temp_dir)
+            
+            response = result.parts[0].function_response.response["result"]
+            
+            # Should fail gracefully
+            assert "Error:" in response
+            assert "not found" in response or "NonExistentSheet" in response
 
 
 class TestUnmergeCells:

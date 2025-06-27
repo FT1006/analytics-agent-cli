@@ -18,6 +18,9 @@ from .functions.merge_cells import schema_merge_cells, merge_cells
 from .functions.unmerge_cells import schema_unmerge_cells, unmerge_cells
 from .functions.copy_range import schema_copy_range, copy_range
 from .functions.delete_range import schema_delete_range, delete_range
+from .functions.validate_formula_syntax import schema_validate_formula_syntax, validate_formula_syntax
+from .functions.apply_formula import schema_apply_formula, apply_formula
+from .functions.get_data_validation_info import schema_get_data_validation_info, get_data_validation_info
 
 
 available_functions = types.Tool(
@@ -40,6 +43,9 @@ available_functions = types.Tool(
         schema_unmerge_cells,
         schema_copy_range,
         schema_delete_range,
+        schema_validate_formula_syntax,
+        schema_apply_formula,
+        schema_get_data_validation_info,
     ]
 )
 
@@ -73,7 +79,10 @@ def call_function(function_call_part, working_directory, verbose=False):
         "merge_cells": merge_cells,
         "unmerge_cells": unmerge_cells,
         "copy_range": copy_range,
-        "delete_range": delete_range
+        "delete_range": delete_range,
+        "validate_formula_syntax": validate_formula_syntax,
+        "apply_formula": apply_formula,
+        "get_data_validation_info": get_data_validation_info
     }
 
     if function_name not in function_dict:
