@@ -32,36 +32,19 @@ def serialize_message(message):
     - Already serialized dicts: Pass through unchanged
     """
     if hasattr(message, 'role') and hasattr(message, 'parts'):
-        # Handle tool messages by converting function response to readable text
+        # Skip tool messages entirely to avoid function call/response pairing issues
         if message.role == "tool":
-            for part in message.parts:
-                if hasattr(part, 'function_response') and part.function_response:
-                    # Extract actual response data for AI visibility
-                    response_data = part.function_response.response
-                    function_name = part.function_response.name
-                    
-                    # Convert response to readable text based on structure
-                    if isinstance(response_data, dict) and "result" in response_data:
-                        result = response_data["result"]
-                        if isinstance(result, list):
-                            # List of items (like file names) - make comma-separated
-                            result_text = ", ".join(str(item) for item in result)
-                        else:
-                            # String or other data
-                            result_text = str(result)
-                    else:
-                        # Fallback for other response formats
-                        result_text = str(response_data)
-                    
-                    return {
-                        "role": "model",  # Convert tool response to model message
-                        "text": f"Function {function_name} result: {result_text}"
-                    }
-            return None  # Skip tool messages without valid function responses
+            return None  # Skip all tool messages
             
-        # Extract text from parts for user/model messages
+        # Check if this is a model message with function calls - skip those too
+        if message.role == "model" and message.parts:
+            for part in message.parts:
+                if hasattr(part, 'function_call') and part.function_call:
+                    return None  # Skip model messages with function calls
+            
+        # Extract text from parts for user/model messages (without function calls)
         text_parts = []
-        for part in message.parts:
+        for part in message.parts or []:
             if hasattr(part, 'text') and part.text:
                 text_parts.append(part.text)
         

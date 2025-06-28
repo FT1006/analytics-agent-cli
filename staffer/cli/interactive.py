@@ -71,11 +71,6 @@ You MUST call get_working_directory() immediately when asked to confirm your wor
         
         if res.candidates:
             for candidate in res.candidates:
-                # Add response to conversation only if it has valid parts (following Google's validation pattern)
-                if candidate.content.parts and len(candidate.content.parts) > 0:
-                    conversation.append(candidate.content)
-                elif verbose:
-                    print(f"   ⚠️  Skipping empty LLM response content")
                 # Handle potential None parts (malformed LLM response)
                 parts = candidate.content.parts or []
                 for part in parts:
@@ -93,6 +88,12 @@ You MUST call get_working_directory() immediately when asked to confirm your wor
                         
                         # Return only the original messages + new working directory context (skip init prompt)
                         return messages + conversation[len(messages) + 1:]
+                
+                # Add response to conversation history only if it has valid parts
+                if candidate.content.parts and len(candidate.content.parts) > 0:
+                    conversation.append(candidate.content)
+                elif verbose:
+                    print(f"   ⚠️  Skipping empty content from conversation history")
         
         # If no function call, break
         # Handle potential None parts in generator expression

@@ -142,12 +142,6 @@ def process_prompt(prompt, verbose=False, messages=None, terminal=None):
 
         if res.candidates:
             for candidate in res.candidates:
-                # Add assistant response to conversation for LLM (only if it has valid parts)
-                if candidate.content.parts and len(candidate.content.parts) > 0:
-                    conversation_for_llm.append(candidate.content)
-                elif verbose:
-                    print(f"   ⚠️  Skipping empty LLM response content")
-                
                 # Collect all function responses for this turn
                 function_response_parts = []
                 # Handle potential None parts (malformed LLM response)
@@ -171,6 +165,12 @@ def process_prompt(prompt, verbose=False, messages=None, terminal=None):
                                     response=function_call_result.parts[0].function_response.response
                                 ))
                             )
+                
+                # Add assistant response to conversation history (validate parts first)
+                if candidate.content.parts and len(candidate.content.parts) > 0:
+                    conversation_for_llm.append(candidate.content)
+                elif verbose:
+                    print(f"   ⚠️  Skipping empty content from conversation history")
                 
                 # Add all function responses as a single tool message
                 if function_response_parts:
