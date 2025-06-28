@@ -66,3 +66,51 @@ class TestLoadDataset:
             
             # Should return error
             assert 'Error:' in result
+            
+    def test_in_memory_optimization(self):
+        """Test that datasets are stored in memory for performance."""
+        with tempfile.TemporaryDirectory() as temp_dir:
+            # Create test CSV file
+            test_data = pd.DataFrame({
+                'name': ['Alice', 'Bob'],
+                'score': [95, 87]
+            })
+            csv_file = os.path.join(temp_dir, 'test.csv')
+            test_data.to_csv(csv_file, index=False)
+            
+            # First load - should store in memory
+            result1 = load_dataset(temp_dir, 'test.csv', 'memory_test')
+            result1_dict = json.loads(result1)
+            assert result1_dict['status'] == 'loaded'
+            
+            # Import and check that dataset is in memory
+            from staffer.functions.load_dataset import loaded_datasets
+            assert 'memory_test' in loaded_datasets
+            assert len(loaded_datasets['memory_test']) == 2
+            
+    def test_get_dataset_from_memory_and_fallback(self):
+        """Test get_dataset function with memory and file fallback."""
+        with tempfile.TemporaryDirectory() as temp_dir:
+            # Create test data
+            test_data = pd.DataFrame({
+                'x': [1, 2, 3],
+                'y': [4, 5, 6]
+            })
+            csv_file = os.path.join(temp_dir, 'fallback_test.csv')
+            test_data.to_csv(csv_file, index=False)
+            
+            # Load dataset
+            load_dataset(temp_dir, 'fallback_test.csv', 'fallback')
+            
+            # Test memory retrieval
+            from staffer.functions.load_dataset import get_dataset, loaded_datasets
+            df_memory = get_dataset(temp_dir, 'fallback')
+            assert len(df_memory) == 3
+            
+            # Clear memory to test fallback
+            loaded_datasets.clear()
+            
+            # Test fallback retrieval (should reload from file)
+            df_fallback = get_dataset(temp_dir, 'fallback')
+            assert len(df_fallback) == 3
+            assert 'fallback' in loaded_datasets  # Should be back in memory

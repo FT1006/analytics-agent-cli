@@ -5,6 +5,11 @@ import json
 import pandas as pd
 from google.genai import types
 from datetime import datetime
+from typing import Dict
+
+# Global in-memory storage for datasets (Stage 2 optimization)
+loaded_datasets: Dict[str, pd.DataFrame] = {}
+dataset_schemas: Dict[str, dict] = {}
 
 
 def load_dataset(working_directory, file_path, dataset_name):
@@ -43,11 +48,18 @@ def load_dataset(working_directory, file_path, dataset_name):
         dataset_file = os.path.join(datasets_dir, f'{dataset_name}.csv')
         df.to_csv(dataset_file, index=False)
         
+        # Store in memory for performance (Stage 2 optimization)
+        loaded_datasets[dataset_name] = df
+        
         # Create and save schema
         schema = create_dataset_schema(df, dataset_name)
+        dataset_schemas[dataset_name] = schema
         schema_file = os.path.join(schemas_dir, f'{dataset_name}.json')
         with open(schema_file, 'w') as f:
             json.dump(schema, f, indent=2)
+        
+        # Save lightweight registry entry for cross-session persistence
+        save_registry_entry(working_directory, dataset_name, file_path)
         
         # Return success result as JSON string
         result = {
@@ -112,6 +124,62 @@ def create_dataset_schema(df, dataset_name):
         'row_count': len(df),
         'suggested_analyses': suggestions
     }
+
+
+def get_dataset(working_directory, dataset_name):
+    """Retrieve dataset from memory with fallback to reload from file."""
+    # First try memory
+    if dataset_name in loaded_datasets:
+        return loaded_datasets[dataset_name]
+    
+    # Fallback: Check registry and reload
+    analytics_dir = os.path.join(working_directory, '.staffer_analytics')
+    registry_file = os.path.join(analytics_dir, 'registry.json')
+    
+    if os.path.exists(registry_file):
+        with open(registry_file, 'r') as f:
+            registry = json.load(f)
+        
+        if dataset_name in registry:
+            # Reload from file
+            dataset_file = os.path.join(analytics_dir, 'datasets', f'{dataset_name}.csv')
+            if os.path.exists(dataset_file):
+                df = pd.read_csv(dataset_file)
+                loaded_datasets[dataset_name] = df
+                
+                # Reload schema too
+                schema_file = os.path.join(analytics_dir, 'schemas', f'{dataset_name}.json')
+                if os.path.exists(schema_file):
+                    with open(schema_file, 'r') as f:
+                        dataset_schemas[dataset_name] = json.load(f)
+                
+                return df
+    
+    # Dataset not found
+    raise ValueError(f"Dataset '{dataset_name}' not loaded. Use load_dataset() first.")
+
+
+def save_registry_entry(working_directory, dataset_name, file_path):
+    """Save lightweight registry entry for cross-session persistence."""
+    analytics_dir = os.path.join(working_directory, '.staffer_analytics')
+    registry_file = os.path.join(analytics_dir, 'registry.json')
+    
+    # Load existing registry or create new
+    if os.path.exists(registry_file):
+        with open(registry_file, 'r') as f:
+            registry = json.load(f)
+    else:
+        registry = {}
+    
+    # Add/update entry
+    registry[dataset_name] = {
+        'file_path': file_path,
+        'loaded_at': datetime.now().isoformat()
+    }
+    
+    # Save registry
+    with open(registry_file, 'w') as f:
+        json.dump(registry, f, indent=2)
 
 
 # Schema for Google AI function declaration
