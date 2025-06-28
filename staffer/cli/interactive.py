@@ -36,7 +36,7 @@ def should_reinitialize_working_directory(messages, current_dir):
     return True
 
 
-def initialize_session_with_working_directory(messages):
+def initialize_session_with_working_directory(messages, verbose=False):
     """Force AI to call get_working_directory to establish current location."""
     working_directory = Path(os.getcwd())
     available_functions = get_available_functions(str(working_directory))
@@ -77,7 +77,7 @@ You MUST call get_working_directory() immediately when asked to confirm your wor
                 for part in parts:
                     if part.function_call and part.function_call.name == "get_working_directory":
                         # Function called! Execute it and add result
-                        function_result = call_function(part.function_call, str(working_directory))
+                        function_result = call_function(part.function_call, str(working_directory), verbose=verbose)
                         conversation.append(function_result)
                         
                         # Add confirmation message
@@ -154,7 +154,7 @@ def show_help():
     print("  exit      - Save session and quit")
 
 
-def main():
+def main(verbose=False):
     """Main interactive mode entry point."""
     # Get terminal UI (enhanced or basic)
     terminal = get_terminal_ui()
@@ -184,7 +184,7 @@ def main():
     current_dir = Path(os.getcwd())
     if should_reinitialize_working_directory(messages, current_dir):
         with terminal.show_spinner("Initializing working directory context..."):
-            messages = initialize_session_with_working_directory(messages)
+            messages = initialize_session_with_working_directory(messages, verbose=verbose)
             save_session_with_metadata(messages)
     
     print()  # Spacing
@@ -215,7 +215,7 @@ def main():
                 
             # Process the command with terminal feedback
             with terminal.show_spinner("AI is thinking..."):
-                messages = process_prompt(user_input, messages=messages, terminal=terminal)
+                messages = process_prompt(user_input, verbose=verbose, messages=messages, terminal=terminal)
             print()  # Add spacing between responses
             
         except (EOFError, KeyboardInterrupt):

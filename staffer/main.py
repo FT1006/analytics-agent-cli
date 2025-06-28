@@ -228,7 +228,7 @@ Terminal Experience:
     # Handle interactive mode - either explicit flag or no prompt provided
     if args.interactive or not args.prompt:
         from .cli.interactive import main as interactive_main
-        interactive_main()
+        interactive_main(verbose=args.verbose)
         return
     
     # Single command mode with prompt

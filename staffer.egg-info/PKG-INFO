@@ -1,0 +1,21 @@
+Metadata-Version: 2.4
+Name: staffer
+Version: 0.2.0
+Summary: AI coding agent that works in any directory
+Author: Staffer Team
+Classifier: Development Status :: 3 - Alpha
+Classifier: Intended Audience :: Developers
+Classifier: Programming Language :: Python :: 3
+Classifier: Programming Language :: Python :: 3.8
+Classifier: Programming Language :: Python :: 3.9
+Classifier: Programming Language :: Python :: 3.10
+Classifier: Programming Language :: Python :: 3.11
+Classifier: Programming Language :: Python :: 3.12
+Requires-Python: >=3.8
+Requires-Dist: google-genai==1.12.1
+Requires-Dist: python-dotenv==1.1.0
+Dynamic: author
+Dynamic: classifier
+Dynamic: requires-dist
+Dynamic: requires-python
+Dynamic: summary

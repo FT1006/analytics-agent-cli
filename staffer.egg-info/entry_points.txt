@@ -1,0 +1,2 @@
+[console_scripts]
+staffer = staffer.cli:main
