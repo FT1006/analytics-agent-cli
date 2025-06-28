@@ -26,6 +26,8 @@ from .functions.create_table import schema_create_table, create_table
 from .functions.create_chart import schema_create_chart, create_chart
 from .functions.create_pivot_table import schema_create_pivot_table, create_pivot_table
 from .functions.load_dataset import schema_load_dataset, load_dataset
+from .functions.list_loaded_datasets import schema_list_loaded_datasets, list_loaded_datasets
+from .functions.load_dataset_from_excel import schema_load_dataset_from_excel, load_dataset_from_excel
 from .functions.export_analysis_to_excel import schema_export_analysis_to_excel, export_analysis_to_excel
 
 
@@ -57,6 +59,8 @@ available_functions = types.Tool(
         schema_create_chart,
         schema_create_pivot_table,
         schema_load_dataset,
+        schema_list_loaded_datasets,
+        schema_load_dataset_from_excel,
         schema_export_analysis_to_excel,
     ]
 )
@@ -101,6 +105,8 @@ def call_function(function_call_part, working_directory, verbose=False):
         "create_chart": create_chart,
         "create_pivot_table": create_pivot_table,
         "load_dataset": load_dataset,
+        "list_loaded_datasets": list_loaded_datasets,
+        "load_dataset_from_excel": load_dataset_from_excel,
         "export_analysis_to_excel": export_analysis_to_excel
     }
 
