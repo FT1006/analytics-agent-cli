@@ -1,4 +1,5 @@
 from google.genai import types
+import traceback
 
 from .functions.get_files_info import schema_get_files_info, get_files_info
 from .functions.get_file_content import schema_get_file_content, get_file_content
@@ -196,6 +197,17 @@ def call_function(function_call_part, working_directory, verbose=False):
             # Create a summary of the result for basic mode
             result_summary = _create_result_summary(function_result)
             print(f"   → Result: {result_summary}")
+        
+        # Return successful result
+        return types.Content(
+            role="tool",
+            parts=[
+                types.Part.from_function_response(
+                    name=function_name,
+                    response={"result": function_result},
+                )
+            ],
+        )
             
     except AttributeError as e:
         # Catch 'NoneType' object has no attribute errors
@@ -203,6 +215,7 @@ def call_function(function_call_part, working_directory, verbose=False):
             error_msg = f"Error: One or more required parameters are None. {str(e)}"
             if verbose:
                 print(f"   ❌ Error: {error_msg}")
+                print(f"   ❌ Full traceback: {traceback.format_exc()}")
             else:
                 print(f"   → Error: None parameter")
             return types.Content(
@@ -215,7 +228,7 @@ def call_function(function_call_part, working_directory, verbose=False):
                 ],
             )
         else:
-            # Re-raise other AttributeErrors
+            # Re-raise other AttributeErrors for general handler
             raise
     except TypeError as e:
         # Catch 'NoneType' object is not iterable errors
@@ -223,6 +236,7 @@ def call_function(function_call_part, working_directory, verbose=False):
             error_msg = f"Error: Invalid None value passed to function. {str(e)}"
             if verbose:
                 print(f"   ❌ Error: {error_msg}")
+                print(f"   ❌ Full traceback: {traceback.format_exc()}")
             else:
                 print(f"   → Error: None value")
             return types.Content(
@@ -235,15 +249,24 @@ def call_function(function_call_part, working_directory, verbose=False):
                 ],
             )
         else:
-            # Re-raise other TypeErrors
+            # Re-raise other TypeErrors for general handler
             raise
-
-    return types.Content(
-    role="tool",
-    parts=[
-        types.Part.from_function_response(
-            name=function_name,
-            response={"result": function_result},
+    except Exception as e:
+        # Catch all other exceptions with full debugging info
+        error_msg = f"Error: Function {function_name} failed: {str(e)}"
+        if verbose:
+            print(f"   ❌ Error: {error_msg}")
+            print(f"   ❌ Exception type: {type(e).__name__}")
+            print(f"   ❌ Full traceback: {traceback.format_exc()}")
+        else:
+            print(f"   → Error: {str(e)}")
+        
+        return types.Content(
+            role="tool",
+            parts=[
+                types.Part.from_function_response(
+                    name=function_name,
+                    response={"result": error_msg},
+                )
+            ],
         )
-    ],
-)
