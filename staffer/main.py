@@ -147,7 +147,9 @@ def process_prompt(prompt, verbose=False, messages=None, terminal=None):
                 
                 # Collect all function responses for this turn
                 function_response_parts = []
-                for part in candidate.content.parts:
+                # Handle potential None parts (malformed LLM response)
+                parts = candidate.content.parts or []
+                for part in parts:
                     if part.function_call:
                         function_called = True
                         # Display function call indicator if terminal provided

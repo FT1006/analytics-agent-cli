@@ -72,7 +72,9 @@ You MUST call get_working_directory() immediately when asked to confirm your wor
         if res.candidates:
             for candidate in res.candidates:
                 conversation.append(candidate.content)
-                for part in candidate.content.parts:
+                # Handle potential None parts (malformed LLM response)
+                parts = candidate.content.parts or []
+                for part in parts:
                     if part.function_call and part.function_call.name == "get_working_directory":
                         # Function called! Execute it and add result
                         function_result = call_function(part.function_call, str(working_directory))
@@ -89,7 +91,14 @@ You MUST call get_working_directory() immediately when asked to confirm your wor
                         return messages + conversation[len(messages) + 1:]
         
         # If no function call, break
-        if not any(part.function_call for candidate in res.candidates for part in candidate.content.parts if part.function_call):
+        # Handle potential None parts in generator expression
+        has_function_calls = any(
+            part.function_call 
+            for candidate in res.candidates 
+            for part in (candidate.content.parts or [])
+            if part.function_call
+        )
+        if not has_function_calls:
             break
     
     # If function wasn't called, return original messages

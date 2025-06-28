@@ -68,7 +68,8 @@ def call_function(function_call_part, working_directory, verbose=False):
 
     args = function_call_part.args or {}
     function_name = function_call_part.name.lower()
-
+    
+    # Keep original args but we'll add error handling
     function_dict = {
         "get_files_info": get_files_info,
         "get_file_content": get_file_content,
@@ -108,7 +109,38 @@ def call_function(function_call_part, working_directory, verbose=False):
             ],
         )
     
-    function_result = function_dict[function_name](working_directory, **args)
+    try:
+        function_result = function_dict[function_name](working_directory, **args)
+    except AttributeError as e:
+        # Catch 'NoneType' object has no attribute errors
+        if "'NoneType' object has no attribute" in str(e):
+            return types.Content(
+                role="tool",
+                parts=[
+                    types.Part.from_function_response(
+                        name=function_name,
+                        response={"result": f"Error: One or more required parameters are None. {str(e)}"},
+                    )
+                ],
+            )
+        else:
+            # Re-raise other AttributeErrors
+            raise
+    except TypeError as e:
+        # Catch 'NoneType' object is not iterable errors
+        if "NoneType" in str(e):
+            return types.Content(
+                role="tool", 
+                parts=[
+                    types.Part.from_function_response(
+                        name=function_name,
+                        response={"result": f"Error: Invalid None value passed to function. {str(e)}"},
+                    )
+                ],
+            )
+        else:
+            # Re-raise other TypeErrors
+            raise
 
     return types.Content(
     role="tool",
