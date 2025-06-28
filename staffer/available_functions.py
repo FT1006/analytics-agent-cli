@@ -26,6 +26,7 @@ from .functions.create_table import schema_create_table, create_table
 from .functions.create_chart import schema_create_chart, create_chart
 from .functions.create_pivot_table import schema_create_pivot_table, create_pivot_table
 from .functions.load_dataset import schema_load_dataset, load_dataset
+from .functions.export_analysis_to_excel import schema_export_analysis_to_excel, export_analysis_to_excel
 
 
 available_functions = types.Tool(
@@ -56,6 +57,7 @@ available_functions = types.Tool(
         schema_create_chart,
         schema_create_pivot_table,
         schema_load_dataset,
+        schema_export_analysis_to_excel,
     ]
 )
 
@@ -98,7 +100,8 @@ def call_function(function_call_part, working_directory, verbose=False):
         "create_table": create_table,
         "create_chart": create_chart,
         "create_pivot_table": create_pivot_table,
-        "load_dataset": load_dataset
+        "load_dataset": load_dataset,
+        "export_analysis_to_excel": export_analysis_to_excel
     }
 
     if function_name not in function_dict:
