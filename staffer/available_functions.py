@@ -25,6 +25,7 @@ from .functions.format_range import schema_format_range, format_range
 from .functions.create_table import schema_create_table, create_table
 from .functions.create_chart import schema_create_chart, create_chart
 from .functions.create_pivot_table import schema_create_pivot_table, create_pivot_table
+from .functions.load_dataset import schema_load_dataset, load_dataset
 
 
 available_functions = types.Tool(
@@ -54,6 +55,7 @@ available_functions = types.Tool(
         schema_create_table,
         schema_create_chart,
         schema_create_pivot_table,
+        schema_load_dataset,
     ]
 )
 
@@ -95,7 +97,8 @@ def call_function(function_call_part, working_directory, verbose=False):
         "format_range": format_range,
         "create_table": create_table,
         "create_chart": create_chart,
-        "create_pivot_table": create_pivot_table
+        "create_pivot_table": create_pivot_table,
+        "load_dataset": load_dataset
     }
 
     if function_name not in function_dict:
