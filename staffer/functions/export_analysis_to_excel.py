@@ -11,6 +11,12 @@ from typing import Dict, Any, List, Union
 from google.genai import types
 from .write_data_to_excel import write_data_to_excel
 
+try:
+    from openpyxl import load_workbook
+    OPENPYXL_AVAILABLE = True
+except ImportError:
+    OPENPYXL_AVAILABLE = False
+
 
 def export_analysis_to_excel(
     working_directory: str,
@@ -66,6 +72,10 @@ def export_analysis_to_excel(
         
         # Convert analysis results to list of lists based on type
         main_data = _convert_to_data_rows(analysis_results, analysis_type)
+        
+        # Ensure the sheet exists before writing
+        _ensure_sheet_exists(working_directory, file_path, sheet_name)
+        _ensure_sheet_exists(working_directory, file_path, "Metadata")
         
         # Write main data to Excel
         write_result = write_data_to_excel(
@@ -313,6 +323,43 @@ def _create_metadata_rows(analysis_results: Dict[str, Any], analysis_type: str) 
             data.append([f"Custom: {key}", str(value)])
     
     return data
+
+
+def _ensure_sheet_exists(working_directory: str, file_path: str, sheet_name: str) -> None:
+    """
+    Ensure that a sheet exists in the Excel workbook, creating it if necessary.
+    
+    Args:
+        working_directory: Base directory for file operations
+        file_path: Path to Excel file (relative to working_directory)
+        sheet_name: Name of the sheet to ensure exists
+    """
+    if not OPENPYXL_AVAILABLE:
+        return  # Can't create sheets without openpyxl
+    
+    # Security: Validate file path is within working directory
+    working_dir_abs = os.path.abspath(working_directory)
+    file_abs_path = os.path.abspath(os.path.join(working_dir_abs, file_path))
+    
+    if not file_abs_path.startswith(working_dir_abs):
+        return  # Security violation, don't create sheet
+    
+    if not os.path.exists(file_abs_path):
+        return  # File doesn't exist, can't create sheet
+    
+    try:
+        wb = load_workbook(file_abs_path)
+        
+        # Create sheet if it doesn't exist
+        if sheet_name not in wb.sheetnames:
+            wb.create_sheet(sheet_name)
+            wb.save(file_abs_path)
+        
+        wb.close()
+    except Exception:
+        # Silently fail if we can't create the sheet
+        # The write_data_to_excel function will handle the error
+        pass
 
 
 # Schema for Google AI function declaration
