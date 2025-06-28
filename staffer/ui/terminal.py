@@ -95,6 +95,10 @@ class TerminalUI:
     
     def display_ai_response(self, response: str):
         """Display AI response with potential code highlighting."""
+        # Handle None or empty response gracefully
+        if not response:
+            return
+            
         # Simple code block detection and highlighting
         lines = response.split('\n')
         in_code_block = False
