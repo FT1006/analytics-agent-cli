@@ -30,6 +30,7 @@ from .functions.load_dataset import schema_load_dataset, load_dataset
 from .functions.list_loaded_datasets import schema_list_loaded_datasets, list_loaded_datasets
 from .functions.load_dataset_from_excel import schema_load_dataset_from_excel, load_dataset_from_excel
 from .functions.export_analysis_to_excel import schema_export_analysis_to_excel, export_analysis_to_excel
+from .functions.get_dataset_schema import schema_get_dataset_schema, get_dataset_schema
 
 
 available_functions = types.Tool(
@@ -63,6 +64,7 @@ available_functions = types.Tool(
         schema_list_loaded_datasets,
         schema_load_dataset_from_excel,
         schema_export_analysis_to_excel,
+        schema_get_dataset_schema,
     ]
 )
 
@@ -172,7 +174,8 @@ def call_function(function_call_part, working_directory, verbose=False):
         "load_dataset": load_dataset,
         "list_loaded_datasets": list_loaded_datasets,
         "load_dataset_from_excel": load_dataset_from_excel,
-        "export_analysis_to_excel": export_analysis_to_excel
+        "export_analysis_to_excel": export_analysis_to_excel,
+        "get_dataset_schema": get_dataset_schema
     }
 
     if function_name not in function_dict:
