@@ -142,8 +142,11 @@ def process_prompt(prompt, verbose=False, messages=None, terminal=None):
 
         if res.candidates:
             for candidate in res.candidates:
-                # Add assistant response to conversation for LLM
-                conversation_for_llm.append(candidate.content)
+                # Add assistant response to conversation for LLM (only if it has valid parts)
+                if candidate.content.parts and len(candidate.content.parts) > 0:
+                    conversation_for_llm.append(candidate.content)
+                elif verbose:
+                    print(f"   ⚠️  Skipping empty LLM response content")
                 
                 # Collect all function responses for this turn
                 function_response_parts = []

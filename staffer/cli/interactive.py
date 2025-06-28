@@ -71,7 +71,11 @@ You MUST call get_working_directory() immediately when asked to confirm your wor
         
         if res.candidates:
             for candidate in res.candidates:
-                conversation.append(candidate.content)
+                # Add response to conversation only if it has valid parts (following Google's validation pattern)
+                if candidate.content.parts and len(candidate.content.parts) > 0:
+                    conversation.append(candidate.content)
+                elif verbose:
+                    print(f"   ⚠️  Skipping empty LLM response content")
                 # Handle potential None parts (malformed LLM response)
                 parts = candidate.content.parts or []
                 for part in parts:
