@@ -33,6 +33,8 @@ from .functions.export_analysis_to_excel import schema_export_analysis_to_excel,
 from .functions.get_dataset_schema import schema_get_dataset_schema, get_dataset_schema
 from .functions.get_dataset_summary import get_dataset_summary_schema, get_dataset_summary
 from .functions.preview_dataset import schema_preview_dataset, preview_dataset
+from .functions.get_ai_suggestions import get_ai_suggestions_schema, get_ai_suggestions
+from .functions.get_dataset_context import schema_get_dataset_context, get_dataset_context
 
 
 available_functions = types.Tool(
@@ -69,6 +71,8 @@ available_functions = types.Tool(
         schema_get_dataset_schema,
         get_dataset_summary_schema,
         schema_preview_dataset,
+        get_ai_suggestions_schema,
+        schema_get_dataset_context,
     ]
 )
 
@@ -181,7 +185,9 @@ def call_function(function_call_part, working_directory, verbose=False):
         "export_analysis_to_excel": export_analysis_to_excel,
         "get_dataset_schema": get_dataset_schema,
         "get_dataset_summary": get_dataset_summary,
-        "preview_dataset": preview_dataset
+        "preview_dataset": preview_dataset,
+        "get_ai_suggestions": get_ai_suggestions,
+        "get_dataset_context": get_dataset_context
     }
 
     if function_name not in function_dict:
