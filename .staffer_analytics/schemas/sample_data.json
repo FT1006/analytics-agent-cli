@@ -1,0 +1,94 @@
+{
+  "name": "sample_data",
+  "columns": {
+    "date": {
+      "name": "date",
+      "dtype": "object",
+      "unique_values": 5,
+      "null_percentage": 0.0,
+      "sample_values": [
+        "2024-01-01",
+        "2024-01-01",
+        "2024-01-01"
+      ],
+      "suggested_role": "categorical"
+    },
+    "product": {
+      "name": "product",
+      "dtype": "object",
+      "unique_values": 5,
+      "null_percentage": 0.0,
+      "sample_values": [
+        "Widget A",
+        "Widget B",
+        "Gadget X"
+      ],
+      "suggested_role": "categorical"
+    },
+    "category": {
+      "name": "category",
+      "dtype": "object",
+      "unique_values": 3,
+      "null_percentage": 0.0,
+      "sample_values": [
+        "Electronics",
+        "Electronics",
+        "Home"
+      ],
+      "suggested_role": "categorical"
+    },
+    "quantity": {
+      "name": "quantity",
+      "dtype": "int64",
+      "unique_values": 12,
+      "null_percentage": 0.0,
+      "sample_values": [
+        50,
+        30,
+        25
+      ],
+      "suggested_role": "numerical"
+    },
+    "price": {
+      "name": "price",
+      "dtype": "float64",
+      "unique_values": 5,
+      "null_percentage": 0.0,
+      "sample_values": [
+        29.99,
+        49.99,
+        15.99
+      ],
+      "suggested_role": "numerical"
+    },
+    "region": {
+      "name": "region",
+      "dtype": "object",
+      "unique_values": 4,
+      "null_percentage": 0.0,
+      "sample_values": [
+        "North",
+        "South",
+        "East"
+      ],
+      "suggested_role": "categorical"
+    },
+    "customer_segment": {
+      "name": "customer_segment",
+      "dtype": "object",
+      "unique_values": 3,
+      "null_percentage": 0.0,
+      "sample_values": [
+        "Enterprise",
+        "SMB",
+        "Consumer"
+      ],
+      "suggested_role": "categorical"
+    }
+  },
+  "row_count": 15,
+  "suggested_analyses": [
+    "correlation_analysis",
+    "segmentation_analysis"
+  ]
+}

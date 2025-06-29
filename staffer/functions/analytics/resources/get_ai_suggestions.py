@@ -2,7 +2,8 @@
 
 import json
 from typing import Dict, Any, List
-from .load_dataset import loaded_datasets, dataset_schemas
+from google.genai import types
+from ..tools.load_dataset import loaded_datasets, dataset_schemas
 
 
 def get_ai_suggestions(working_directory: str, dataset_name: str) -> str:
@@ -125,24 +126,20 @@ def get_ai_suggestions(working_directory: str, dataset_name: str) -> str:
 
 
 # Google AI function schema
-get_ai_suggestions_schema = {
-    "name": "get_ai_suggestions",
-    "description": "Get AI-generated analysis suggestions for a loaded dataset based on data characteristics",
-    "parameters": {
-        "type": "object",
-        "properties": {
-            "working_directory": {
-                "type": "string",
-                "description": "Path to the working directory"
-            },
-            "dataset_name": {
-                "type": "string", 
-                "description": "Name of the dataset to get suggestions for"
-            }
+get_ai_suggestions_schema = types.FunctionDeclaration(
+    name="get_ai_suggestions",
+    description="Get AI-generated analysis suggestions for a loaded dataset based on data characteristics",
+    parameters=types.Schema(
+        type=types.Type.OBJECT,
+        properties={
+            "dataset_name": types.Schema(
+                type=types.Type.STRING,
+                description="Name of the dataset to get suggestions for",
+            ),
         },
-        "required": ["working_directory", "dataset_name"]
-    }
-}
+        required=["dataset_name"],
+    ),
+)
 
 # MCP version reference:
 # This implementation is based on get_analysis_suggestions_resource.py and suggest_analysis_tool.py

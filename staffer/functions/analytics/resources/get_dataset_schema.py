@@ -7,7 +7,7 @@ import pandas as pd
 from google.genai import types
 
 # Import global storage from load_dataset
-from .load_dataset import loaded_datasets, dataset_schemas
+from ..tools.load_dataset import loaded_datasets, dataset_schemas
 
 
 def get_dataset_schema(working_directory, dataset_name):
@@ -78,7 +78,7 @@ def get_dataset_schema(working_directory, dataset_name):
 def _generate_schema(df: pd.DataFrame, dataset_name: str) -> Dict[str, Any]:
     """Generate schema information from DataFrame - reuse existing schema structure"""
     # Use the existing create_dataset_schema function from load_dataset
-    from .load_dataset import create_dataset_schema
+    from ..tools.load_dataset import create_dataset_schema
     return create_dataset_schema(df, dataset_name)
 
 

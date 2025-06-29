@@ -5,7 +5,7 @@ import json
 from datetime import datetime
 from google.genai import types
 
-from .load_dataset import loaded_datasets, get_dataset
+from ..tools.load_dataset import loaded_datasets, get_dataset
 
 
 def list_loaded_datasets(working_directory):
@@ -83,3 +83,34 @@ schema_list_loaded_datasets = types.FunctionDeclaration(
         required=[],
     ),
 )
+
+
+# MCP Implementation Reference
+# /Users/spaceship/project/analytic-agent-cli/function_bank/mcp_server/tools/list_loaded_datasets_tool.py
+#
+# async def list_loaded_datasets() -> dict:
+#     """Show all datasets currently in memory."""
+#     try:
+#         datasets = []
+#         total_memory = 0
+#         
+#         for name in DatasetManager.list_datasets():
+#             info = DatasetManager.get_dataset_info(name)
+#             memory_mb = info["memory_usage_mb"]
+#             total_memory += memory_mb
+#             
+#             datasets.append({
+#                 "name": name,
+#                 "rows": info["shape"][0],
+#                 "columns": info["shape"][1],
+#                 "memory_mb": round(memory_mb, 1)
+#             })
+#         
+#         return {
+#             "loaded_datasets": datasets,
+#             "total_datasets": len(datasets),
+#             "total_memory_mb": round(total_memory, 1)
+#         }
+#         
+#     except Exception as e:
+#         return {"error": f"Failed to list datasets: {str(e)}}"

@@ -3,7 +3,7 @@
 import os
 import json
 from google.genai import types
-from .load_dataset import loaded_datasets, dataset_schemas
+from ..tools.load_dataset import loaded_datasets, dataset_schemas
 
 
 def get_dataset_context(working_directory):

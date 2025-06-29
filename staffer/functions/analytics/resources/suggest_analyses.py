@@ -3,7 +3,7 @@
 import json
 from typing import Dict, Any, Optional
 from google.genai import types
-from .load_dataset import loaded_datasets, dataset_schemas
+from ..tools.load_dataset import loaded_datasets, dataset_schemas
 
 
 def suggest_analyses(working_directory: str, dataset_name: str) -> str:

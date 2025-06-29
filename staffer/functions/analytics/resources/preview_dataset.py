@@ -2,7 +2,7 @@
 
 import json
 from google.genai import types
-from .load_dataset import loaded_datasets
+from ..tools.load_dataset import loaded_datasets
 
 
 def preview_dataset(working_directory, dataset_name, rows=5):

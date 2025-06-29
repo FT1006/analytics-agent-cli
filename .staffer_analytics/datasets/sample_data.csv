@@ -1,0 +1,16 @@
+date,product,category,quantity,price,region,customer_segment
+2024-01-01,Widget A,Electronics,50,29.99,North,Enterprise
+2024-01-01,Widget B,Electronics,30,49.99,South,SMB
+2024-01-01,Gadget X,Home,25,15.99,East,Consumer
+2024-01-02,Widget A,Electronics,45,29.99,West,Enterprise
+2024-01-02,Tool Y,Industrial,15,199.99,North,Enterprise
+2024-01-02,Gadget X,Home,35,15.99,South,Consumer
+2024-01-03,Widget B,Electronics,20,49.99,East,SMB
+2024-01-03,Tool Y,Industrial,10,199.99,West,Enterprise
+2024-01-03,Gadget Z,Home,40,12.99,North,Consumer
+2024-01-04,Widget A,Electronics,55,29.99,South,Enterprise
+2024-01-04,Gadget X,Home,30,15.99,East,Consumer
+2024-01-04,Tool Y,Industrial,8,199.99,North,Enterprise
+2024-01-05,Widget B,Electronics,25,49.99,West,SMB
+2024-01-05,Gadget Z,Home,45,12.99,South,Consumer
+2024-01-05,Widget A,Electronics,60,29.99,East,Enterprise

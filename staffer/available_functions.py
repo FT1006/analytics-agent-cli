@@ -1,40 +1,41 @@
 from google.genai import types
 import traceback
 
-from .functions.get_files_info import schema_get_files_info, get_files_info
-from .functions.get_file_content import schema_get_file_content, get_file_content
-from .functions.write_file import schema_write_file, write_file
-from .functions.run_python_file import schema_run_python_file, run_python_file
-from .functions.get_working_directory import schema_get_working_directory, get_working_directory
-from .functions.create_workbook import schema_create_workbook, create_workbook
-from .functions.create_worksheet import schema_create_worksheet, create_worksheet
-from .functions.get_workbook_metadata import schema_get_workbook_metadata, get_workbook_metadata
-from .functions.rename_worksheet import schema_rename_worksheet, rename_worksheet
-from .functions.delete_worksheet import schema_delete_worksheet, delete_worksheet
-from .functions.read_data_from_excel import schema_read_data_from_excel, read_data_from_excel
-from .functions.write_data_to_excel import schema_write_data_to_excel, write_data_to_excel
-from .functions.copy_worksheet import schema_copy_worksheet, copy_worksheet
-from .functions.validate_excel_range import schema_validate_excel_range, validate_excel_range
-from .functions.merge_cells import schema_merge_cells, merge_cells
-from .functions.unmerge_cells import schema_unmerge_cells, unmerge_cells
-from .functions.copy_range import schema_copy_range, copy_range
-from .functions.delete_range import schema_delete_range, delete_range
-from .functions.validate_formula_syntax import schema_validate_formula_syntax, validate_formula_syntax
-from .functions.apply_formula import schema_apply_formula, apply_formula
-from .functions.get_data_validation_info import schema_get_data_validation_info, get_data_validation_info
-from .functions.format_range import schema_format_range, format_range
-from .functions.create_table import schema_create_table, create_table
-from .functions.create_chart import schema_create_chart, create_chart
-from .functions.create_pivot_table import schema_create_pivot_table, create_pivot_table
-from .functions.load_dataset import schema_load_dataset, load_dataset
-from .functions.list_loaded_datasets import schema_list_loaded_datasets, list_loaded_datasets
-from .functions.load_dataset_from_excel import schema_load_dataset_from_excel, load_dataset_from_excel
-from .functions.export_analysis_to_excel import schema_export_analysis_to_excel, export_analysis_to_excel
-from .functions.get_dataset_schema import schema_get_dataset_schema, get_dataset_schema
-from .functions.get_dataset_summary import get_dataset_summary_schema, get_dataset_summary
-from .functions.preview_dataset import schema_preview_dataset, preview_dataset
-from .functions.get_ai_suggestions import get_ai_suggestions_schema, get_ai_suggestions
-from .functions.get_dataset_context import schema_get_dataset_context, get_dataset_context
+from .functions.file_ops.get_files_info import schema_get_files_info, get_files_info
+from .functions.file_ops.get_file_content import schema_get_file_content, get_file_content
+from .functions.file_ops.write_file import schema_write_file, write_file
+from .functions.file_ops.run_python_file import schema_run_python_file, run_python_file
+from .functions.file_ops.get_working_directory import schema_get_working_directory, get_working_directory
+from .functions.excel.workbooks.create_workbook import schema_create_workbook, create_workbook
+from .functions.excel.worksheets.create_worksheet import schema_create_worksheet, create_worksheet
+from .functions.excel.workbooks.get_workbook_metadata import schema_get_workbook_metadata, get_workbook_metadata
+from .functions.excel.worksheets.rename_worksheet import schema_rename_worksheet, rename_worksheet
+from .functions.excel.worksheets.delete_worksheet import schema_delete_worksheet, delete_worksheet
+from .functions.excel.worksheets.read_data_from_excel import schema_read_data_from_excel, read_data_from_excel
+from .functions.excel.worksheets.write_data_to_excel import schema_write_data_to_excel, write_data_to_excel
+from .functions.excel.worksheets.copy_worksheet import schema_copy_worksheet, copy_worksheet
+from .functions.excel.cells_ranges.validate_excel_range import schema_validate_excel_range, validate_excel_range
+from .functions.excel.cells_ranges.merge_cells import schema_merge_cells, merge_cells
+from .functions.excel.cells_ranges.unmerge_cells import schema_unmerge_cells, unmerge_cells
+from .functions.excel.cells_ranges.copy_range import schema_copy_range, copy_range
+from .functions.excel.cells_ranges.delete_range import schema_delete_range, delete_range
+from .functions.excel.cells_ranges.validate_formula_syntax import schema_validate_formula_syntax, validate_formula_syntax
+from .functions.excel.cells_ranges.apply_formula import schema_apply_formula, apply_formula
+from .functions.excel.cells_ranges.get_data_validation_info import schema_get_data_validation_info, get_data_validation_info
+from .functions.excel.cells_ranges.format_range import schema_format_range, format_range
+from .functions.excel.charts_tables.create_table import schema_create_table, create_table
+from .functions.excel.charts_tables.create_chart import schema_create_chart, create_chart
+from .functions.excel.charts_tables.create_pivot_table import schema_create_pivot_table, create_pivot_table
+from .functions.analytics.tools.load_dataset import schema_load_dataset, load_dataset
+from .functions.analytics.resources.list_loaded_datasets import schema_list_loaded_datasets, list_loaded_datasets
+from .functions.analytics.tools.load_dataset_from_excel import schema_load_dataset_from_excel, load_dataset_from_excel
+from .functions.analytics.tools.export_analysis_to_excel import schema_export_analysis_to_excel, export_analysis_to_excel
+from .functions.analytics.resources.get_dataset_schema import schema_get_dataset_schema, get_dataset_schema
+from .functions.analytics.resources.get_dataset_summary import get_dataset_summary_schema, get_dataset_summary
+from .functions.analytics.resources.preview_dataset import schema_preview_dataset, preview_dataset
+from .functions.analytics.resources.get_ai_suggestions import get_ai_suggestions_schema, get_ai_suggestions
+from .functions.analytics.resources.get_dataset_context import schema_get_dataset_context, get_dataset_context
+from .functions.analytics.resources.suggest_analyses import suggest_analyses_schema, suggest_analyses
 
 
 available_functions = types.Tool(
@@ -73,6 +74,7 @@ available_functions = types.Tool(
         schema_preview_dataset,
         get_ai_suggestions_schema,
         schema_get_dataset_context,
+        suggest_analyses_schema,
     ]
 )
 
@@ -187,7 +189,8 @@ def call_function(function_call_part, working_directory, verbose=False):
         "get_dataset_summary": get_dataset_summary,
         "preview_dataset": preview_dataset,
         "get_ai_suggestions": get_ai_suggestions,
-        "get_dataset_context": get_dataset_context
+        "get_dataset_context": get_dataset_context,
+        "suggest_analyses": suggest_analyses
     }
 
     if function_name not in function_dict:

@@ -3,13 +3,18 @@ Export analysis results to Excel format.
 
 This function bridges Analytics → Excel workflows by taking analysis results
 and converting them to Excel format using the existing write_data_to_excel function.
+
+MCP Reference: Related to /function_bank/mcp_server/tools/export_insights_tool.py
+- MCP version exports generic insights to JSON/CSV/HTML formats
+- Staffer version specializes in Excel export with structured formatting for analysis results
+- Both handle data export but serve different use cases (insights vs analysis results)
 """
 
 import json
 import os
 from typing import Dict, Any, List, Union
 from google.genai import types
-from .write_data_to_excel import write_data_to_excel
+from ...excel.worksheets.write_data_to_excel import write_data_to_excel
 
 try:
     from openpyxl import load_workbook

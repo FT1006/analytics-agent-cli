@@ -3,7 +3,7 @@ import json
 import os
 from typing import Optional
 from google.genai import types
-from .load_dataset import loaded_datasets, dataset_schemas
+from ..tools.load_dataset import loaded_datasets, dataset_schemas
 
 
 get_dataset_summary_schema = types.FunctionDeclaration(

@@ -1,4 +1,9 @@
-"""Load dataset from Excel function that bridges Excel I/O with Analytics workflows."""
+"""Load dataset from Excel function that bridges Excel I/O with Analytics workflows.
+
+MCP Reference: No equivalent MCP function exists. The MCP load_dataset_tool only handles 
+JSON/CSV files, while this function specifically handles Excel files by bridging the 
+Excel I/O layer with the analytics layer. This is unique to Staffer.
+"""
 
 import os
 import json
@@ -6,7 +11,7 @@ import tempfile
 import pandas as pd
 from google.genai import types
 
-from .read_data_from_excel import read_data_from_excel
+from ...excel.worksheets.read_data_from_excel import read_data_from_excel
 from .load_dataset import load_dataset
 
 
