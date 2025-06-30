@@ -86,8 +86,9 @@ You MUST call get_working_directory() immediately when asked to confirm your wor
                         )
                         conversation.append(confirmation)
                         
-                        # Return only the original messages + new working directory context (skip init prompt)
-                        return messages + conversation[len(messages) + 1:]
+                        # Return only the original messages without the initialization
+                        # The working directory has been confirmed, no need to add to history
+                        return messages
                 
                 # Add response to conversation history only if it has valid parts
                 if candidate.content.parts and len(candidate.content.parts) > 0:
