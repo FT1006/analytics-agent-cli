@@ -4,9 +4,10 @@ import pandas as pd
 import numpy as np
 from typing import List, Dict, Any, Optional, Union
 from ..models.schemas import DatasetManager, loaded_datasets, dataset_schemas, ChartConfig
+from google.genai import types
 
 
-async def list_loaded_datasets() -> dict:
+def list_loaded_datasets(working_directory: str) -> dict:
     """Show all datasets currently in memory."""
     try:
         datasets = []
@@ -32,3 +33,15 @@ async def list_loaded_datasets() -> dict:
         
     except Exception as e:
         return {"error": f"Failed to list datasets: {str(e)}"}
+
+
+# Gemini function schema
+schema_list_loaded_datasets = types.FunctionDeclaration(
+    name="list_loaded_datasets",
+    description="Show all datasets currently in memory",
+    parameters=types.Schema(
+        type=types.Type.OBJECT,
+        properties={},
+        required=[],
+    ),
+)

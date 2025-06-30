@@ -1,67 +1,16 @@
+"""Main entry point for available functions in Staffer."""
+
 from google.genai import types
 import traceback
 
-from .functions.file_ops.get_files_info import schema_get_files_info, get_files_info
-from .functions.file_ops.get_file_content import schema_get_file_content, get_file_content
-from .functions.file_ops.write_file import schema_write_file, write_file
-from .functions.file_ops.run_python_file import schema_run_python_file, run_python_file
-from .functions.file_ops.get_working_directory import schema_get_working_directory, get_working_directory
-from .functions.excel.workbooks.create_workbook import schema_create_workbook, create_workbook
-from .functions.excel.worksheets.create_worksheet import schema_create_worksheet, create_worksheet
-from .functions.excel.workbooks.get_workbook_metadata import schema_get_workbook_metadata, get_workbook_metadata
-from .functions.excel.worksheets.rename_worksheet import schema_rename_worksheet, rename_worksheet
-from .functions.excel.worksheets.delete_worksheet import schema_delete_worksheet, delete_worksheet
-from .functions.excel.worksheets.read_data_from_excel import schema_read_data_from_excel, read_data_from_excel
-from .functions.excel.worksheets.write_data_to_excel import schema_write_data_to_excel, write_data_to_excel
-from .functions.excel.worksheets.copy_worksheet import schema_copy_worksheet, copy_worksheet
-from .functions.excel.cells_ranges.validate_excel_range import schema_validate_excel_range, validate_excel_range
-from .functions.excel.cells_ranges.merge_cells import schema_merge_cells, merge_cells
-from .functions.excel.cells_ranges.unmerge_cells import schema_unmerge_cells, unmerge_cells
-from .functions.excel.cells_ranges.copy_range import schema_copy_range, copy_range
-from .functions.excel.cells_ranges.delete_range import schema_delete_range, delete_range
-from .functions.excel.cells_ranges.validate_formula_syntax import schema_validate_formula_syntax, validate_formula_syntax
-from .functions.excel.cells_ranges.apply_formula import schema_apply_formula, apply_formula
-from .functions.excel.cells_ranges.get_data_validation_info import schema_get_data_validation_info, get_data_validation_info
-from .functions.excel.cells_ranges.format_range import schema_format_range, format_range
-from .functions.excel.charts_tables.create_table import schema_create_table, create_table
-from .functions.excel.charts_tables.create_chart import schema_create_chart, create_chart
-from .functions.excel.charts_tables.create_pivot_table import schema_create_pivot_table, create_pivot_table
-from .functions.analytics.tools.load_dataset_tool import schema_load_dataset, load_dataset
+# Import the combined registry from the subfolder
+from .function_registries import available_functions as tool_registry, all_functions as function_dict
 
-
-available_functions = types.Tool(
-    function_declarations=[
-        schema_get_files_info,
-        schema_get_file_content,
-        schema_write_file,
-        schema_run_python_file,
-        schema_get_working_directory,
-        schema_create_workbook,
-        schema_create_worksheet,
-        schema_get_workbook_metadata,
-        schema_rename_worksheet,
-        schema_delete_worksheet,
-        schema_read_data_from_excel,
-        schema_write_data_to_excel,
-        schema_copy_worksheet,
-        schema_validate_excel_range,
-        schema_merge_cells,
-        schema_unmerge_cells,
-        schema_copy_range,
-        schema_delete_range,
-        schema_validate_formula_syntax,
-        schema_apply_formula,
-        schema_get_data_validation_info,
-        schema_format_range,
-        schema_create_table,
-        schema_create_chart,
-        schema_create_pivot_table,
-        schema_load_dataset,
-    ]
-)
 
 def get_available_functions(working_dir):
-    return available_functions
+    """Get all available functions for the given working directory."""
+    return tool_registry
+
 
 def _create_args_summary(args):
     """Create a concise summary of arguments for logging."""
@@ -118,6 +67,7 @@ def _create_result_summary(result):
 
 
 def call_function(function_call_part, working_directory, verbose=False):
+    """Call a function with the given arguments and working directory."""
     args = function_call_part.args or {}
     function_name = function_call_part.name.lower()
     
@@ -136,36 +86,6 @@ def call_function(function_call_part, working_directory, verbose=False):
         args_summary = _create_args_summary(function_call_part.args)
         print(f" - Calling function: {function_name}{args_summary}")
     
-    # Keep original args but we'll add error handling
-    function_dict = {
-        "get_files_info": get_files_info,
-        "get_file_content": get_file_content,
-        "write_file": write_file,
-        "run_python_file": run_python_file,
-        "get_working_directory": get_working_directory,
-        "create_workbook": create_workbook,
-        "create_worksheet": create_worksheet,
-        "get_workbook_metadata": get_workbook_metadata,
-        "rename_worksheet": rename_worksheet,
-        "delete_worksheet": delete_worksheet,
-        "read_data_from_excel": read_data_from_excel,
-        "write_data_to_excel": write_data_to_excel,
-        "copy_worksheet": copy_worksheet,
-        "validate_excel_range": validate_excel_range,
-        "merge_cells": merge_cells,
-        "unmerge_cells": unmerge_cells,
-        "copy_range": copy_range,
-        "delete_range": delete_range,
-        "validate_formula_syntax": validate_formula_syntax,
-        "apply_formula": apply_formula,
-        "get_data_validation_info": get_data_validation_info,
-        "format_range": format_range,
-        "create_table": create_table,
-        "create_chart": create_chart,
-        "create_pivot_table": create_pivot_table,
-        "load_dataset": load_dataset,
-    }
-
     if function_name not in function_dict:
         return types.Content(
             role="tool",
