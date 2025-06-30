@@ -138,8 +138,8 @@ def create_chart(
 
 # Gemini function schema
 schema_create_chart = types.FunctionDeclaration(
-    name="create_chart",
-    description="Create generic charts that adapt to any dataset",
+    name="create_analytic_chart_html",
+    description="Create interactive HTML charts from loaded datasets for data analysis and visualization",
     parameters=types.Schema(
         type=types.Type.OBJECT,
         properties={

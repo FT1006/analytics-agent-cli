@@ -118,8 +118,8 @@ def create_chart(working_directory, filepath, sheet_name, data_range, chart_type
 
 # Schema for Google AI function declaration
 schema_create_chart = types.FunctionDeclaration(
-    name="create_chart",
-    description="Create a chart in an Excel worksheet",
+    name="create_chart_excel",
+    description="Create and embed a chart in an Excel worksheet using cell ranges",
     parameters=types.Schema(
         type=types.Type.OBJECT,
         properties={

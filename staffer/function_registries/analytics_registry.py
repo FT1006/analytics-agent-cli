@@ -6,7 +6,7 @@ from google.genai import types
 from ..functions.analytics.tools.analyze_distributions_tool import schema_analyze_distributions, analyze_distributions
 from ..functions.analytics.tools.calculate_feature_importance_tool import schema_calculate_feature_importance, calculate_feature_importance
 from ..functions.analytics.tools.compare_datasets_tool import schema_compare_datasets, compare_datasets
-from ..functions.analytics.tools.create_chart_tool import schema_create_chart as schema_analytics_create_chart, create_chart as analytics_create_chart
+from ..functions.analytics.tools.create_chart_tool import schema_create_chart as schema_create_analytic_chart_html, create_chart as create_analytic_chart_html
 from ..functions.analytics.tools.detect_outliers_tool import schema_detect_outliers, detect_outliers
 from ..functions.analytics.tools.execute_custom_analytics_code_tool import schema_execute_custom_analytics_code, execute_custom_analytics_code
 from ..functions.analytics.tools.export_insights_tool import schema_export_insights, export_insights
@@ -81,7 +81,7 @@ analytics_schemas = [
     schema_analyze_distributions,
     schema_calculate_feature_importance,
     schema_compare_datasets,
-    schema_analytics_create_chart,
+    schema_create_analytic_chart_html,
     schema_detect_outliers,
     schema_execute_custom_analytics_code,
     schema_export_insights,
@@ -126,7 +126,7 @@ analytics_functions = {
     "analyze_distributions": analyze_distributions,
     "calculate_feature_importance": calculate_feature_importance,
     "compare_datasets": compare_datasets,
-    "analytics_create_chart": analytics_create_chart,  # Renamed to avoid conflict with excel
+    "create_analytic_chart_html": create_analytic_chart_html,
     "detect_outliers": detect_outliers,
     "execute_custom_analytics_code": execute_custom_analytics_code,
     "export_insights": export_insights,

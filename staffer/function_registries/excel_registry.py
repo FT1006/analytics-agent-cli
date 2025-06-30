@@ -27,7 +27,7 @@ from ..functions.excel.cells_ranges.format_range import schema_format_range, for
 
 # Import Excel charts/tables functions and schemas
 from ..functions.excel.charts_tables.create_table import schema_create_table, create_table
-from ..functions.excel.charts_tables.create_chart import schema_create_chart, create_chart
+from ..functions.excel.charts_tables.create_chart import schema_create_chart as schema_create_chart_excel, create_chart as create_chart_excel
 from ..functions.excel.charts_tables.create_pivot_table import schema_create_pivot_table, create_pivot_table
 
 # Excel operations schemas list
@@ -54,7 +54,7 @@ excel_schemas = [
     schema_format_range,
     # Charts/Tables
     schema_create_table,
-    schema_create_chart,
+    schema_create_chart_excel,
     schema_create_pivot_table,
 ]
 
@@ -82,6 +82,6 @@ excel_functions = {
     "format_range": format_range,
     # Charts/Tables
     "create_table": create_table,
-    "create_chart": create_chart,
+    "create_chart_excel": create_chart_excel,
     "create_pivot_table": create_pivot_table,
 }
