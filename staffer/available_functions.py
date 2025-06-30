@@ -26,16 +26,7 @@ from .functions.excel.cells_ranges.format_range import schema_format_range, form
 from .functions.excel.charts_tables.create_table import schema_create_table, create_table
 from .functions.excel.charts_tables.create_chart import schema_create_chart, create_chart
 from .functions.excel.charts_tables.create_pivot_table import schema_create_pivot_table, create_pivot_table
-from .functions.analytics.tools.load_dataset import schema_load_dataset, load_dataset
-from .functions.analytics.resources.list_loaded_datasets import schema_list_loaded_datasets, list_loaded_datasets
-from .functions.analytics.tools.load_dataset_from_excel import schema_load_dataset_from_excel, load_dataset_from_excel
-from .functions.analytics.tools.export_analysis_to_excel import schema_export_analysis_to_excel, export_analysis_to_excel
-from .functions.analytics.resources.get_dataset_schema import schema_get_dataset_schema, get_dataset_schema
-from .functions.analytics.resources.get_dataset_summary import get_dataset_summary_schema, get_dataset_summary
-from .functions.analytics.resources.preview_dataset import schema_preview_dataset, preview_dataset
-from .functions.analytics.resources.get_ai_suggestions import get_ai_suggestions_schema, get_ai_suggestions
-from .functions.analytics.resources.get_dataset_context import schema_get_dataset_context, get_dataset_context
-from .functions.analytics.resources.suggest_analyses import suggest_analyses_schema, suggest_analyses
+from .functions.analytics.tools.load_dataset_tool import schema_load_dataset, load_dataset
 
 
 available_functions = types.Tool(
@@ -66,15 +57,6 @@ available_functions = types.Tool(
         schema_create_chart,
         schema_create_pivot_table,
         schema_load_dataset,
-        schema_list_loaded_datasets,
-        schema_load_dataset_from_excel,
-        schema_export_analysis_to_excel,
-        schema_get_dataset_schema,
-        get_dataset_summary_schema,
-        schema_preview_dataset,
-        get_ai_suggestions_schema,
-        schema_get_dataset_context,
-        suggest_analyses_schema,
     ]
 )
 
@@ -182,15 +164,6 @@ def call_function(function_call_part, working_directory, verbose=False):
         "create_chart": create_chart,
         "create_pivot_table": create_pivot_table,
         "load_dataset": load_dataset,
-        "list_loaded_datasets": list_loaded_datasets,
-        "load_dataset_from_excel": load_dataset_from_excel,
-        "export_analysis_to_excel": export_analysis_to_excel,
-        "get_dataset_schema": get_dataset_schema,
-        "get_dataset_summary": get_dataset_summary,
-        "preview_dataset": preview_dataset,
-        "get_ai_suggestions": get_ai_suggestions,
-        "get_dataset_context": get_dataset_context,
-        "suggest_analyses": suggest_analyses
     }
 
     if function_name not in function_dict:
