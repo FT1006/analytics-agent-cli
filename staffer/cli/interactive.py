@@ -168,21 +168,43 @@ def count_conversation_items(messages):
     return user_questions, function_attempts, function_successes, agent_responses
 
 
+def estimate_tokens_breakdown(messages):
+    """Estimate input and output tokens separately."""
+    input_chars = 0
+    output_chars = 0
+    
+    for msg in messages:
+        if hasattr(msg, 'role') and hasattr(msg, 'parts') and msg.parts:
+            msg_chars = sum(len(str(part)) for part in msg.parts)
+            
+            if msg.role == 'user':
+                input_chars += msg_chars
+            elif msg.role == 'model':
+                output_chars += msg_chars
+            elif msg.role == 'tool':
+                # Tool responses count as output
+                output_chars += msg_chars
+    
+    # Rough approximation: 4 characters per token
+    input_tokens = input_chars // 4
+    output_tokens = output_chars // 4
+    total_tokens = input_tokens + output_tokens
+    
+    return input_tokens, output_tokens, total_tokens
+
+
 def show_session_info(messages):
     """Display current session information."""
     current_dir = os.getcwd()
     user_questions, function_attempts, function_successes, agent_responses = count_conversation_items(messages)
+    input_tokens, output_tokens, total_tokens = estimate_tokens_breakdown(messages)
     
     print(f"Current Directory: {current_dir}")
     print(f"User questions: {user_questions}")
     print(f"Agent responses: {agent_responses}")
     print(f"Function call attempts: {function_attempts}")
     print(f"Function call successes: {function_successes}")
-    
-    # Basic token estimation (rough approximation)
-    total_chars = sum(len(str(msg)) for msg in messages if hasattr(msg, 'parts'))
-    estimated_tokens = total_chars // 4
-    print(f"Estimated tokens: {estimated_tokens}")
+    print(f"Estimated tokens - Input: {input_tokens}, Output: {output_tokens}, Total: {total_tokens}")
 
 
 def show_help():
