@@ -2,11 +2,11 @@
 
 An analytics agent that understands plain English, analyzes your real data locally, and integrates directly into your existing workflow.
 
-**Not another analytics tool** – Skip SQL and custom syntax; just ask questions naturally.
-**Not another chatbot** – Actually performs real analytics operations on your data.
+**Not another analytics tool** – Skip SQL and custom syntax; just ask questions naturally.  
+**Not another chatbot** – Actually performs real analytics operations on your data.  
 **Not another web app** – Works directly with your local files and folders.
 
-**Before:** Export data → Upload to ChatGPT → Manually implement suggested analysis → Visualize results yourself
+**Before:** Export data → Upload to ChatGPT → Manually implement suggested analysis → Visualize results yourself  
 **After:** Run in your local folder: `> What drives order value? Show me a chart.`
 
 ## Why This Matters
