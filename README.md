@@ -1,10 +1,53 @@
-# Analytic Agent CLI - AI Analytics in Folders
+# Analytics Agent CLI
 
-AI that works in whatever folder you're in. Just `cd` to any project and talk to AI about your data.
+An analytics agent that understands plain English, analyzes your real data locally, and integrates directly into your existing workflow.
+
+**Not another analytics tool** – Skip SQL and custom syntax; just ask questions naturally.
+**Not another chatbot** – Actually performs real analytics operations on your data.
+**Not another web app** – Works directly with your local files and folders.
+
+**Before:** Export data → Upload to ChatGPT → Manually implement suggested analysis → Visualize results yourself
+**After:** Run in your local folder: `> What drives order value? Show me a chart.`
+
+## Why This Matters
+
+Traditional analytics tools force translation from business questions into code. Generic LLM chatbots discuss data without truly analyzing it.
+
+Analytics Agent CLI introduces a new paradigm: **real-world analytics operations through natural conversation**.
+
+### Imagine a future where:
+
+* **Product managers** explore data without learning SQL.
+* **Analysts** validate logic interactively before building pipelines.
+* **Engineers** receive clear, pre-validated analytics requirements.
+
+This working prototype demonstrates that future today.
+
+## Local Integration Advantages
+
+* **Direct File Access** – No data copying between tools.
+* **Real Workflow Integration** – Results saved directly in your project folders.
+* **Controlled Data Exposure** – You precisely select data for analysis.
+* **Developer-Friendly** – Fully terminal-based, integrates seamlessly into existing workflows.
+
+## Example Usage
+
+```bash
+$ cd examples/ecommerce_analytics  
+$ aacli
+> find drivers of high-value orders
+
+🔧 Analyzing ecommerce_orders.csv...
+
+Found key correlations with high order value:
+- **Customer segment**: Premium customers spend +67% more
+- **Product category**: Electronics drive 3.2x higher average orders
+- **Payment method**: Credit card payments are 41% higher
+
+> visualize premium customer behavior
+```
 
 ## Quick Start
-
-Get a free API key at [Google AI Studio](https://aistudio.google.com/app/apikey), then:
 
 ```bash
 # Install
@@ -12,100 +55,42 @@ git clone https://github.com/FT1006/analytic-agent-cli.git
 cd analytic-agent-cli
 pip install -e .
 
-# Set your API key
+# Setup API Key (Free from Google AI Studio)
 export GEMINI_API_KEY=your_key_here
 
-# Go to any folder and chat with AI
-cd /your/project
-staffer # Start interactive mode (default)
-
-# Optional: Install enhanced terminal dependencies
-pip install prompt-toolkit rich yaspin
-
-# Or run single commands
-staffer "what files are here?"
-staffer "add error handling to main.py"
+# Try it
+cd examples/ecommerce_analytics
+aacli
 ```
 
-## How it works
+## How It Fits Your Workflow
 
-- **AI knows your folder** - Understands what's in your current directory
-- **Reads and writes files** - Can view and modify Excel files and data in your folder
-- **Analyzes data** - Performs analytics and creates insights from your datasets
-- **Remembers conversations** - Picks up where you left off
-- **Adapts to folder changes** - Asks if you want to continue or start fresh when you switch projects
-- **Enhanced terminal UI** - Rich prompts, command history, and syntax highlighting
-- **Works everywhere** - Any folder, any project
+* **Explore quickly** – Validate analytical ideas in minutes.
+* **Stakeholder alignment** – Discuss clear analytics insights in plain English.
+* **Rapid deployment** – Confidently implement validated logic in production tools (Airflow, dbt, Alteryx).
 
-## How UX works
+## Common Commands
 
-- **Smart sessions** - Automatically saves and restores your conversations
-- **Directory detection** - Notices when you switch folders and asks what to do
-- **Session commands** - Use `/reset`, `/session`, `/help` in interactive mode
-- **Natural exit** - Just type `exit` or `quit` to save and leave
-- **Arrow key history** - Use ↑↓ to navigate through previous commands
-- **Persistent history** - Command history saved across sessions
+**Data Quality Checks:**
 
-**Terminal Dependencies (optional):**
+* `> check data quality issues`
+* `> summarize distribution of order values`
+* `> identify outliers`
 
-```bash
-pip install prompt-toolkit rich yaspin
-```
+**Analytical Queries:**
 
-If not installed, Analytic Agent CLI automatically falls back to basic terminal mode.
+* `> correlate features with sales`
+* `> segment customers by behavior`
+* `> compare month-over-month performance`
 
-## Examples
+**Visualization & Reporting:**
 
-```bash
-# Start interactive chat in any folder (default)
-cd ~/my-python-project
-staffer
-# 🚀 Analytic Agent CLI - AI Analytics in Folders
-# Enhanced terminal mode enabled
-staffer ~/my-python-project [0 msgs]> what's in this folder?
-# 🔧 Calling get_files_info...
-# [AI shows your files with syntax highlighting]
-staffer ~/my-python-project [2 msgs]> create a README for this project
-# ⚡ AI is thinking...
-# [AI creates README.md]
-staffer ~/my-python-project [4 msgs]> exit
-# ✅ Session saved
-# ✅ Goodbye!
+* `> generate a trend chart`
+* `> export insights as HTML`
+* `> provide statistical summary`
 
-# Run single commands without entering interactive mode
-cd ~/my-web-app
-staffer "fix the bug in main.py"
-staffer "add tests for the main functions"
+## Requirements
 
-# Switch folders, AI adapts automatically
-cd ~/my-data-project
-staffer
-# Analytic Agent CLI notices you changed folders
-Directory changed from ~/my-web-app to ~/my-data-project
-[N] Start new session  [K] Keep old session
-Choice (N/k): n
-staffer ~/my-data-project [0 msgs]> what kind of project is this?
-```
-
-## Troubleshooting
-
-**API Key not working?**
-
-```bash
-echo $GEMINI_API_KEY  # Should show your key
-```
-
-**Command not found?**
-
-```bash
-pip install -e .  # Reinstall
-which staffer      # Check if in PATH
-```
-
-**Need help?**
-
-```bash
-staffer --help
-```
-
-That's it! AI that understands your folders and helps with your data.
+* Python 3.10+
+* Google Gemini API key (free tier available)
+* Optional enhancements: pandas, openpyxl
