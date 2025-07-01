@@ -137,13 +137,47 @@ def process_command(user_input, messages):
         return True, messages  # Don't modify messages
 
 
+def count_conversation_items(messages):
+    """Count different types of conversation items."""
+    user_questions = 0
+    agent_responses = 0
+    function_attempts = 0
+    function_successes = 0
+    
+    for msg in messages:
+        if hasattr(msg, 'role'):
+            if msg.role == 'user':
+                user_questions += 1
+            elif msg.role == 'model':
+                # Check if this model message contains function calls or is a text response
+                if hasattr(msg, 'parts') and msg.parts:
+                    has_function_calls = any(hasattr(part, 'function_call') and part.function_call for part in msg.parts)
+                    has_text = any(hasattr(part, 'text') and part.text for part in msg.parts)
+                    
+                    if has_function_calls:
+                        # Count function call attempts
+                        function_attempts += sum(1 for part in msg.parts if hasattr(part, 'function_call') and part.function_call)
+                    
+                    if has_text and not has_function_calls:
+                        # Only count as agent response if it's PURE text (no function calls)
+                        agent_responses += 1
+            elif msg.role == 'tool':
+                # Count successful function executions
+                function_successes += 1
+    
+    return user_questions, function_attempts, function_successes, agent_responses
+
+
 def show_session_info(messages):
     """Display current session information."""
     current_dir = os.getcwd()
-    message_count = len(messages)
+    user_questions, function_attempts, function_successes, agent_responses = count_conversation_items(messages)
     
     print(f"Current Directory: {current_dir}")
-    print(f"Messages: {message_count}")
+    print(f"User questions: {user_questions}")
+    print(f"Agent responses: {agent_responses}")
+    print(f"Function call attempts: {function_attempts}")
+    print(f"Function call successes: {function_successes}")
     
     # Basic token estimation (rough approximation)
     total_chars = sum(len(str(msg)) for msg in messages if hasattr(msg, 'parts'))
@@ -200,9 +234,10 @@ def main(verbose=False):
     while True:
         try:
             # Build session info for rich prompt
+            user_questions, function_attempts, function_successes, agent_responses = count_conversation_items(messages)
             session_info = {
                 'cwd': str(current_dir),
-                'message_count': len(messages)
+                'message_count': agent_responses
             }
             user_input = terminal.get_input(session_info).strip()
             
