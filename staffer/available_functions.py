@@ -2,6 +2,10 @@
 
 from google.genai import types
 import traceback
+import json
+import numpy as np
+import pandas as pd
+from datetime import datetime
 
 # Import the combined registry from the subfolder
 from .function_registries import available_functions as tool_registry, all_functions as function_dict
@@ -10,6 +14,61 @@ from .function_registries import available_functions as tool_registry, all_funct
 def get_available_functions(working_dir):
     """Get all available functions for the given working directory."""
     return tool_registry
+
+
+def _serialize_for_json(obj):
+    """Convert pandas/numpy types to JSON-serializable Python types."""
+    
+    # Handle None first
+    if obj is None:
+        return None
+        
+    # Handle pandas NA/NaN with try-except to avoid array ambiguity errors
+    try:
+        if pd.isna(obj):
+            return None
+    except (ValueError, TypeError):
+        # pd.isna() raised an error, likely due to array input
+        pass
+        
+    # Handle numpy number types
+    if isinstance(obj, (np.integer, np.int64, np.int32, np.int16, np.int8)):
+        return int(obj)
+    
+    if isinstance(obj, (np.floating, np.float64, np.float32)):
+        if np.isnan(obj) or np.isinf(obj):
+            return None
+        return float(obj)
+    
+    if isinstance(obj, np.bool_):
+        return bool(obj)
+        
+    # Handle pandas Timestamp
+    if isinstance(obj, pd.Timestamp):
+        return obj.isoformat()
+        
+    # Handle datetime
+    if isinstance(obj, datetime):
+        return obj.isoformat()
+        
+    # Handle numpy arrays and pandas Series
+    if isinstance(obj, (np.ndarray, pd.Series)):
+        return [_serialize_for_json(item) for item in obj]
+        
+    # Handle pandas DataFrame
+    if isinstance(obj, pd.DataFrame):
+        return obj.to_dict(orient='records')
+        
+    # Handle dictionaries recursively
+    if isinstance(obj, dict):
+        return {str(k): _serialize_for_json(v) for k, v in obj.items()}
+        
+    # Handle lists/tuples recursively
+    if isinstance(obj, (list, tuple)):
+        return [_serialize_for_json(item) for item in obj]
+        
+    # Return as-is for basic Python types
+    return obj
 
 
 def _create_args_summary(args):
@@ -100,22 +159,27 @@ def call_function(function_call_part, working_directory, verbose=False):
     try:
         function_result = function_dict[function_name](working_directory, **args)
         
+        # Serialize the result to handle pandas/numpy types
+        serialized_result = _serialize_for_json(function_result)
+        
         # Display function result based on verbosity
         if verbose:
             print(f"   Result: {repr(function_result)}")
             print(f"   Result type: {type(function_result).__name__}")
+            if function_result != serialized_result:
+                print(f"   Serialized: {repr(serialized_result)}")
         else:
             # Create a summary of the result for basic mode
-            result_summary = _create_result_summary(function_result)
+            result_summary = _create_result_summary(serialized_result)
             print(f"   → Result: {result_summary}")
         
-        # Return successful result
+        # Return successful result with serialized data
         return types.Content(
             role="tool",
             parts=[
                 types.Part.from_function_response(
                     name=function_name,
-                    response={"result": function_result},
+                    response={"result": serialized_result},
                 )
             ],
         )
