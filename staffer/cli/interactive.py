@@ -220,10 +220,17 @@ def main(verbose=False):
             if handled:
                 continue
                 
-            # Process the command with terminal feedback
-            with terminal.show_spinner("AI is thinking..."):
-                messages = process_prompt(user_input, verbose=verbose, messages=messages, terminal=terminal)
-            print()  # Add spacing between responses
+            # Start spinner for AI processing
+            spinner = terminal.show_spinner("AI is thinking...")
+            spinner.__enter__()
+            try:
+                messages = process_prompt(user_input, verbose=verbose, messages=messages, terminal=terminal, spinner=spinner)
+            finally:
+                # Ensure spinner is stopped (process_prompt may have already stopped it)
+                try:
+                    spinner.__exit__(None, None, None)
+                except:
+                    pass
             
         except (EOFError, KeyboardInterrupt):
             # Save session before exiting on Ctrl+C - Slice 4 feature

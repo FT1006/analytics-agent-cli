@@ -100,11 +100,24 @@ All paths you provide should be relative to the working directory: {working_dire
 You have access to these functions - use them confidently to explore directories, read files, and accomplish tasks."""
 
 
-def process_prompt(prompt, verbose=False, messages=None, terminal=None):
+def process_prompt(prompt, verbose=False, messages=None, terminal=None, spinner=None):
     """Process a single prompt using the AI agent."""
     if messages is None:
         messages = []
     working_directory = Path(os.getcwd())
+    
+    # Track if spinner has been stopped
+    spinner_stopped = False
+    
+    def stop_spinner_once():
+        nonlocal spinner_stopped
+        if spinner is not None and not spinner_stopped:
+            try:
+                spinner.__exit__(None, None, None)
+                print()  # Add newline after spinner clears
+            except:
+                pass
+            spinner_stopped = True
     available_functions = get_available_functions(str(working_directory))
 
     if verbose:
@@ -149,6 +162,8 @@ def process_prompt(prompt, verbose=False, messages=None, terminal=None):
                 for part in parts:
                     if part.function_call:
                         function_called = True
+                        # Stop spinner before first output
+                        stop_spinner_once()
                         # Display function call indicator if terminal provided
                         if terminal:
                             terminal.display_function_call(part.function_call.name)
@@ -180,6 +195,8 @@ def process_prompt(prompt, verbose=False, messages=None, terminal=None):
                     )
                     conversation_for_llm.append(tool_message)
             if not function_called:
+                # Stop spinner before AI response
+                stop_spinner_once()
                 if terminal:
                     terminal.display_ai_response(res.text)
                 else:
