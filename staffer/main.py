@@ -114,7 +114,6 @@ def process_prompt(prompt, verbose=False, messages=None, terminal=None, spinner=
         if spinner is not None and not spinner_stopped:
             try:
                 spinner.__exit__(None, None, None)
-                print()  # Add newline after spinner clears
             except:
                 pass
             spinner_stopped = True

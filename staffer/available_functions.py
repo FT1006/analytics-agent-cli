@@ -135,7 +135,7 @@ def call_function(function_call_part, working_directory, verbose=False):
     args = function_call_part.args or {}
     function_name = function_call_part.name.lower()
     
-    # Enhanced function call visibility
+    # Enhanced function call visibility (only in verbose mode)
     if verbose:
         print(f"🔍 DETAILED FUNCTION CALL ANALYSIS:")
         print(f"   Function: {function_call_part.name}")
@@ -145,8 +145,7 @@ def call_function(function_call_part, working_directory, verbose=False):
         if args:
             for key, value in args.items():
                 print(f"   - {key}: {repr(value)} (type: {type(value).__name__})")
-    else:
-        # Enhanced basic mode with parameter visibility
+        # Also show the basic function call info in verbose mode
         args_summary = _create_args_summary(function_call_part.args)
         print(f" - Calling function: {function_name}{args_summary}")
     
@@ -173,14 +172,13 @@ def call_function(function_call_part, working_directory, verbose=False):
         # Serialize the result to handle pandas/numpy types
         serialized_result = _serialize_for_json(function_result)
         
-        # Display function result based on verbosity
+        # Display function result based on verbosity (only in verbose mode)
         if verbose:
             print(f"   Result: {repr(function_result)}")
             print(f"   Result type: {type(function_result).__name__}")
             if function_result != serialized_result:
                 print(f"   Serialized: {repr(serialized_result)}")
-        else:
-            # Create a summary of the result for basic mode
+            # Also show the summary in verbose mode
             result_summary = _create_result_summary(serialized_result)
             print(f"   → Result: {result_summary}")
         

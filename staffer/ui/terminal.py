@@ -81,9 +81,7 @@ class TerminalUI:
                 yield
             finally:
                 spinner.__exit__(None, None, None)
-                # Force newline after spinner stops
-                sys.stdout.write('\n')
-                sys.stdout.flush()
+                print()  # Add single newline for spacing
         
         return spinner_with_cleanup()
     
