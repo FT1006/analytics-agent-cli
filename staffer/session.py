@@ -9,7 +9,7 @@ from google.genai import types
 
 def get_session_file_path():
     """Get the path to the session file."""
-    staffer_dir = Path.home() / ".staffer"
+    staffer_dir = Path.home() / ".analytic-agent-cli"
     return staffer_dir / "current_session.json"
 
 

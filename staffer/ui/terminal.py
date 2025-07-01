@@ -27,7 +27,7 @@ class TerminalUI:
         self.console = Console()
         
         # Create history directory if it doesn't exist
-        history_dir = Path.home() / '.staffer'
+        history_dir = Path.home() / '.analytic-agent-cli'
         history_dir.mkdir(exist_ok=True)
         self.history = FileHistory(str(history_dir / 'command_history'))
         
