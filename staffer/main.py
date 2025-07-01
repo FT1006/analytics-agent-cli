@@ -214,17 +214,17 @@ def process_prompt(prompt, verbose=False, messages=None, terminal=None, spinner=
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Staffer - AI coding agent that works in any directory",
+        description="Analytic Agent CLI - AI analytics agent for data analysis and insights",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""Examples:
-  staffer                           # Start interactive mode (default)
-  staffer "analyze this codebase"   # Single command mode
-  staffer "fix the bug in main.py" --verbose
-  staffer --interactive             # Explicit interactive mode
+  aacli                             # Start interactive mode (default)
+  aacli "analyze this dataset"      # Single command mode
+  aacli "create insights from data" --verbose
+  aacli --interactive               # Explicit interactive mode
 
 Interactive Mode Features:
   • Rich terminal interface with syntax highlighting
-  • Smart prompts showing directory and message count: staffer ~/project [5 msgs]>
+  • Smart prompts showing directory and message count: analytic-agent ~/project [5 msgs]>
   • Up/down arrow keys for command history navigation
   • Session commands: /reset, /session, /help
   • Directory change detection (prompts when switching folders)
@@ -241,7 +241,7 @@ Terminal Experience:
     parser.add_argument("prompt", nargs='?', help="The task or question for the AI agent")
     parser.add_argument("--verbose", action="store_true", help="Show detailed function call information")
     parser.add_argument("--interactive", action="store_true", help="Start interactive mode")
-    parser.add_argument("--version", action="version", version="Staffer 0.2.0")
+    parser.add_argument("--version", action="version", version="Analytic Agent CLI 0.1.0")
     
     args = parser.parse_args()
     

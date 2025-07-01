@@ -54,7 +54,7 @@ class TerminalUI:
         if msg_count > 40:  # High token warning
             status += " ⚠️"
             
-        return f"staffer {short_cwd} {status}> "
+        return f"analytic-agent {short_cwd} {status}> "
     
     def _shorten_path(self, path: str) -> str:
         """Shorten path for display in prompt."""
@@ -69,8 +69,23 @@ class TerminalUI:
         return path
     
     def show_spinner(self, message: str):
-        """Show processing spinner."""
-        return yaspin(text=message, color="cyan")
+        """Show processing spinner with newline on completion."""
+        from contextlib import contextmanager
+        import sys
+        
+        @contextmanager  
+        def spinner_with_cleanup():
+            spinner = yaspin(text=message, color="cyan")
+            try:
+                spinner.__enter__()
+                yield
+            finally:
+                spinner.__exit__(None, None, None)
+                # Force newline after spinner stops
+                sys.stdout.write('\n')
+                sys.stdout.flush()
+        
+        return spinner_with_cleanup()
     
     def display_code(self, code: str, language: str = "python"):
         """Display syntax-highlighted code."""
@@ -134,7 +149,7 @@ class TerminalUI:
     
     def display_welcome(self):
         """Display welcome message."""
-        self.console.print("🚀 Staffer - AI in Folders", style="bold blue")
+        self.console.print("🚀 Analytic Agent CLI", style="bold blue")
         self.console.print("Enhanced terminal mode enabled", style="dim")
 
 
@@ -144,7 +159,7 @@ class BasicTerminalUI:
     def get_input(self, session_info: Dict[str, Any]) -> str:
         """Get basic user input."""
         msg_count = session_info.get('message_count', 0)
-        return input(f"staffer [{msg_count} msgs]> ")
+        return input(f"analytic-agent [{msg_count} msgs]> ")
     
     def show_spinner(self, message: str):
         """Basic processing indicator."""
@@ -178,7 +193,7 @@ class BasicTerminalUI:
     
     def display_welcome(self):
         """Display welcome message."""
-        print("🚀 Staffer - AI in Folders")
+        print("🚀 Analytic Agent CLI")
         print("Basic terminal mode")
 
 

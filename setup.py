@@ -1,10 +1,10 @@
 from setuptools import setup, find_packages
 
 setup(
-    name="staffer",
-    version="0.2.0",
-    description="AI coding agent that works in any directory",
-    author="Staffer Team",
+    name="analytic-agent-cli",
+    version="0.1.0", 
+    description="Analytic Agent CLI - AI analytics agent for data analysis and insights",
+    author="FT1006",
     packages=find_packages(),
     install_requires=[
         "google-genai==1.12.1",
@@ -12,7 +12,7 @@ setup(
     ],
     entry_points={
         "console_scripts": [
-            "staffer=staffer.cli:main",
+            "aacli=staffer.cli:main",
         ],
     },
     python_requires=">=3.8",
