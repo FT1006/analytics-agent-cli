@@ -188,11 +188,12 @@ def main(verbose=False):
         terminal.display_success(f"Restored conversation with {len(messages)} previous messages")
     
     # Force working directory initialization
-    current_dir = Path(os.getcwd())
-    if should_reinitialize_working_directory(messages, current_dir):
-        with terminal.show_spinner("Initializing working directory context..."):
-            messages = initialize_session_with_working_directory(messages, verbose=verbose)
-            save_session_with_metadata(messages)
+    # COMMENTED OUT: Let users choose when to provide directory context
+    # current_dir = Path(os.getcwd())
+    # if should_reinitialize_working_directory(messages, current_dir):
+    #     with terminal.show_spinner("Initializing working directory context..."):
+    #         messages = initialize_session_with_working_directory(messages, verbose=verbose)
+    #         save_session_with_metadata(messages)
     
     print()  # Spacing
     
