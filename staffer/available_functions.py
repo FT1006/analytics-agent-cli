@@ -23,6 +23,11 @@ def _serialize_for_json(obj):
     if obj is None:
         return None
         
+    # Handle Path objects
+    from pathlib import Path
+    if isinstance(obj, Path):
+        return str(obj)
+        
     # Handle pandas NA/NaN with try-except to avoid array ambiguity errors
     try:
         if pd.isna(obj):
