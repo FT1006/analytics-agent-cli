@@ -157,7 +157,8 @@ def show_help():
     print("  /reset    - Clear conversation history")
     print("  /session  - Show session info")
     print("  /help     - Show this help")
-    print("  exit      - Save session and quit")
+    print("  /exit     - Save session and quit")
+    print("  /quit     - Save session and quit")
 
 
 def main(verbose=False):
@@ -165,7 +166,7 @@ def main(verbose=False):
     # Get terminal UI (enhanced or basic)
     terminal = get_terminal_ui()
     terminal.display_welcome()
-    terminal.display_success("Type 'exit' or 'quit' to end the session")
+    terminal.display_success("Type '/exit' or '/quit' to end the session")
     
     # Load previous session with metadata 
     messages, metadata = load_session_with_metadata()
@@ -207,7 +208,7 @@ def main(verbose=False):
             if not user_input:
                 continue
                 
-            if user_input.lower() in ['exit', 'quit']:
+            if user_input.lower() in ['/exit', '/quit']:
                 # Save session with metadata before exiting - Slice 4 feature
                 save_session_with_metadata(messages)
                 terminal.display_success("Session saved")
