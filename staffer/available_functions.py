@@ -157,7 +157,13 @@ def call_function(function_call_part, working_directory, verbose=False):
         )
     
     try:
-        function_result = function_dict[function_name](working_directory, **args)
+        # Ensure all args are properly serialized before passing to function
+        # This handles cases where Gemini might pass numpy/pandas types
+        clean_args = {}
+        for k, v in args.items():
+            clean_args[k] = _serialize_for_json(v) if v is not None else None
+        
+        function_result = function_dict[function_name](working_directory, **clean_args)
         
         # Serialize the result to handle pandas/numpy types
         serialized_result = _serialize_for_json(function_result)
