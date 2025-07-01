@@ -1,31 +1,11 @@
 """Analytics-focused data resources implementation."""
 
 from ..models.schemas import (
-    UserProfile, DatasetManager, loaded_datasets, dataset_schemas
+    DatasetManager, loaded_datasets, dataset_schemas
 )
-from ..config.settings import settings
 from typing import Dict, Any, Optional
 from google.genai import types
 
-
-def get_server_config(working_directory: str) -> dict:
-    """Get server configuration."""
-    config = settings.server_info.copy()
-    config.update({
-        "analytics_features": [
-            "dataset_loading",
-            "schema_discovery",
-            "correlation_analysis",
-            "segmentation",
-            "data_quality_assessment",
-            "visualization",
-            "outlier_detection",
-            "time_series_analysis"
-        ],
-        "supported_formats": ["CSV", "JSON"],
-        "memory_storage": "in_memory_dataframes"
-    })
-    return config
 
 
 def get_loaded_datasets(working_directory: str) -> dict:
@@ -380,65 +360,8 @@ def get_memory_usage(working_directory: str) -> dict:
         return {"error": f"Failed to get memory usage: {str(e)}"}
 
 
-# Legacy functions - kept for backward compatibility
-def get_user_profile(working_directory: str, user_id: str) -> dict:
-    """Get user profile by ID."""
-    # In production, this would fetch from a database
-    profile = UserProfile(
-        id=user_id,
-        name=f"User {user_id}",
-        email=f"user{user_id}@example.com",
-        status="active",
-        preferences={
-            "theme": "dark",
-            "notifications": True,
-            "language": "en"
-        }
-    )
-    
-    return profile.model_dump()
-
-
-def get_system_status(working_directory: str) -> dict:
-    """Get system status information."""
-    datasets = DatasetManager.list_datasets()
-    total_memory = sum(DatasetManager.get_dataset_info(name)["memory_usage_mb"] for name in datasets)
-    
-    return {
-        "status": "healthy",
-        "uptime": "Active session",
-        "version": settings.version,
-        "features": [
-            "dataset_loading",
-            "schema_discovery", 
-            "correlation_analysis",
-            "segmentation",
-            "data_quality_assessment",
-            "visualization",
-            "outlier_detection",
-            "time_series_analysis"
-        ],
-        "datasets_loaded": len(datasets),
-        "total_memory_mb": round(total_memory, 1),
-        "dependencies": {
-            "mcp": "1.9.2",
-            "pandas": "2.2.3+",
-            "plotly": "6.1.2+",
-            "pydantic": "2.11.5"
-        }
-    }
 
 # Gemini function schemas
-schema_get_server_config = types.FunctionDeclaration(
-    name="get_server_config",
-    description="Get server configuration and analytics features",
-    parameters=types.Schema(
-        type=types.Type.OBJECT,
-        properties={},
-        required=[],
-    ),
-)
-
 schema_get_loaded_datasets = types.FunctionDeclaration(
     name="get_loaded_datasets",
     description="List all datasets currently in memory with statistics",
@@ -563,27 +486,3 @@ schema_get_memory_usage = types.FunctionDeclaration(
     ),
 )
 
-schema_get_user_profile = types.FunctionDeclaration(
-    name="get_user_profile",
-    description="Get user profile by ID",
-    parameters=types.Schema(
-        type=types.Type.OBJECT,
-        properties={
-            "user_id": types.Schema(
-                type=types.Type.STRING,
-                description="User ID to fetch profile for",
-            ),
-        },
-        required=["user_id"],
-    ),
-)
-
-schema_get_system_status = types.FunctionDeclaration(
-    name="get_system_status",
-    description="Get system status information",
-    parameters=types.Schema(
-        type=types.Type.OBJECT,
-        properties={},
-        required=[],
-    ),
-)

@@ -31,13 +31,9 @@ from ..functions.analytics.resources.get_dataset_schema_resource import schema_g
 from ..functions.analytics.resources.get_dataset_summary_resource import schema_get_dataset_summary, get_dataset_summary
 from ..functions.analytics.resources.get_loaded_datasets_resource import schema_get_loaded_datasets, get_loaded_datasets
 from ..functions.analytics.resources.get_memory_usage_resource import schema_get_memory_usage, get_memory_usage
-from ..functions.analytics.resources.get_server_config_resource import schema_get_server_config, get_server_config
-from ..functions.analytics.resources.get_system_status_resource import schema_get_system_status, get_system_status
-from ..functions.analytics.resources.get_user_profile_resource import schema_get_user_profile, get_user_profile
 
 # Import all functions from data_resources
 from ..functions.analytics.resources.data_resources import (
-    get_server_config as dr_get_server_config,
     get_loaded_datasets as dr_get_loaded_datasets,
     get_dataset_schema as dr_get_dataset_schema,
     get_dataset_summary as dr_get_dataset_summary,
@@ -47,10 +43,7 @@ from ..functions.analytics.resources.data_resources import (
     get_column_types as dr_get_column_types,
     get_analysis_suggestions as dr_get_analysis_suggestions,
     get_memory_usage as dr_get_memory_usage,
-    get_user_profile as dr_get_user_profile,
-    get_system_status as dr_get_system_status,
     # Schemas from data_resources
-    schema_get_server_config as dr_schema_get_server_config,
     schema_get_loaded_datasets as dr_schema_get_loaded_datasets,
     schema_get_dataset_schema as dr_schema_get_dataset_schema,
     schema_get_dataset_summary as dr_schema_get_dataset_summary,
@@ -60,8 +53,6 @@ from ..functions.analytics.resources.data_resources import (
     schema_get_column_types as dr_schema_get_column_types,
     schema_get_analysis_suggestions as dr_schema_get_analysis_suggestions,
     schema_get_memory_usage as dr_schema_get_memory_usage,
-    schema_get_user_profile as dr_schema_get_user_profile,
-    schema_get_system_status as dr_schema_get_system_status,
 )
 
 # Import analytics prompts functions and schemas
@@ -105,9 +96,6 @@ analytics_schemas = [
     schema_get_dataset_summary,
     schema_get_loaded_datasets,
     schema_get_memory_usage,
-    schema_get_server_config,
-    schema_get_system_status,
-    schema_get_user_profile,
     # Prompts (9)
     schema_correlation_investigation,
     schema_dashboard_design_consultation,
@@ -150,9 +138,6 @@ analytics_functions = {
     "get_dataset_summary": get_dataset_summary,
     "get_loaded_datasets": get_loaded_datasets,
     "get_memory_usage": get_memory_usage,
-    "get_server_config": get_server_config,
-    "get_system_status": get_system_status,
-    "get_user_profile": get_user_profile,
     # Prompts (9)
     "correlation_investigation": correlation_investigation,
     "dashboard_design_consultation": dashboard_design_consultation,
