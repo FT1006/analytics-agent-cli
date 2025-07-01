@@ -213,8 +213,7 @@ def show_help():
     print("  /reset    - Clear conversation history")
     print("  /session  - Show session info")
     print("  /help     - Show this help")
-    print("  /exit     - Save session and quit")
-    print("  /quit     - Save session and quit")
+    print("  /exit (or /quit) - Save session and quit")
 
 
 def main(verbose=False):

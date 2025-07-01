@@ -1,9 +1,9 @@
 from setuptools import setup, find_packages
 
 setup(
-    name="analytic-agent-cli",
+    name="analytics-agent-cli",
     version="0.1.0", 
-    description="Analytic Agent CLI - AI analytics agent for data analysis and insights",
+    description="Analytics Agent CLI - AI analytics agent for data analysis and insights",
     author="FT1006",
     packages=find_packages(),
     install_requires=[

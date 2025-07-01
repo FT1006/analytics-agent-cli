@@ -94,3 +94,9 @@ aacli
 * Python 3.10+
 * Google Gemini API key (free tier available)
 * Optional enhancements: pandas, openpyxl
+
+**Note**: Currently supports Google Gemini API only. Support for additional LLM providers (OpenAI, Anthropic, etc.) is planned for future releases.
+
+## Project History
+
+Analytics Agent CLI evolved from [Staffer](https://github.com/FT1006/staffer), a personal project exploring AI-powered workflow automation. This version focuses specifically on analytics capabilities and local file integration, representing a specialized branch of the original concept.

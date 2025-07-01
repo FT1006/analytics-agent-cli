@@ -27,7 +27,7 @@ class TerminalUI:
         self.console = Console()
         
         # Create history directory if it doesn't exist
-        history_dir = Path.home() / '.analytic-agent-cli'
+        history_dir = Path.home() / '.analytics-agent-cli'
         history_dir.mkdir(exist_ok=True)
         self.history = FileHistory(str(history_dir / 'command_history'))
         
@@ -54,7 +54,7 @@ class TerminalUI:
         if msg_count > 40:  # High token warning
             status += " ⚠️"
             
-        return f"analytic-agent {short_cwd} {status}> "
+        return f"analytics-agent {short_cwd} {status}> "
     
     def _shorten_path(self, path: str) -> str:
         """Shorten path for display in prompt."""
@@ -147,7 +147,7 @@ class TerminalUI:
     
     def display_welcome(self):
         """Display welcome message."""
-        self.console.print("🚀 Analytic Agent CLI", style="bold blue")
+        self.console.print("🚀 Analytics Agent CLI", style="bold blue")
         self.console.print("Enhanced terminal mode enabled", style="dim")
 
 
@@ -157,7 +157,7 @@ class BasicTerminalUI:
     def get_input(self, session_info: Dict[str, Any]) -> str:
         """Get basic user input."""
         msg_count = session_info.get('message_count', 0)
-        return input(f"analytic-agent [{msg_count} msgs]> ")
+        return input(f"analytics-agent [{msg_count} msgs]> ")
     
     def show_spinner(self, message: str):
         """Basic processing indicator."""
@@ -191,7 +191,7 @@ class BasicTerminalUI:
     
     def display_welcome(self):
         """Display welcome message."""
-        print("🚀 Analytic Agent CLI")
+        print("🚀 Analytics Agent CLI")
         print("Basic terminal mode")
 
 
