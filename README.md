@@ -33,19 +33,24 @@ This working prototype demonstrates that future today.
 ## Example Usage
 
 ```bash
-$ cd examples/ecommerce_analytics  
-$ aacli
-> find drivers of high-value orders
+$ cd sample_data
+$ aacli "load ecommerce_orders.json as 'sales' then create a bar chart showing average order value by customer_segment"
 
-🔧 Analyzing ecommerce_orders.csv...
+-> I have loaded the data and created a bar chart showing the average order value by customer segment. 
+   Chart saved: outputs/charts/chart_sales_bar_customer_segment.html
 
-Found key correlations with high order value:
-- **Customer segment**: Premium customers spend +67% more
-- **Product category**: Electronics drive 3.2x higher average orders
-- **Payment method**: Credit card payments are 41% higher
+$ aacli "analyze the sales data and export insights report"
 
-> visualize premium customer behavior
+-> Insights report exported to: outputs/reports/insights_sales.html
 ```
+
+**Generated Chart:**
+![Analytics Chart](assets/sample-chart.png)
+
+**Generated Report:**
+![Insights Report](assets/sample-report.png)
+
+*Real outputs generated in seconds - interactive charts and comprehensive analysis reports*
 
 ## Quick Start
 
@@ -62,6 +67,23 @@ export GEMINI_API_KEY=your_key_here
 cd examples/ecommerce_analytics
 aacli
 ```
+
+## 🏗️ Project Architecture
+
+```
+analytic-agent-cli/
+├── staffer/                    # Core agent engine
+│   ├── functions/             # Function implementations
+│   │   ├── analytics/         # 36 analytics functions (tools/resources/prompts)
+│   │   ├── excel/            # 16 Excel automation functions  
+│   │   └── file_ops/         # 5 file system operations
+│   ├── function_registries/   # Dynamic function discovery & registration
+│   ├── cli/                  # Command line interface
+│   └── available_functions.py # LLM integration & monitoring layer
+└── sample_data/              # Example datasets for testing
+```
+
+**[→ Read the detailed Technical Architecture](docs/ARCHITECTURE.md)**
 
 ## How It Fits Your Workflow
 
@@ -95,7 +117,13 @@ aacli
 * Google Gemini API key (free tier available)
 * Optional enhancements: pandas, openpyxl
 
-**Note**: Currently supports Google Gemini API only. Support for additional LLM providers (OpenAI, Anthropic, etc.) is planned for future releases.
+**Note**: Currently supports Google Gemini API only.
+
+## 🚀 Future Updates
+
+- **Subagent capability** - Parallel execution; specialised agents spawning
+- **MCP server support** - Integration with Model Context Protocol ecosystem
+- **Database connectivity** - Direct BigQuery, Snowflake, and PostgreSQL support
 
 ## Project History
 
