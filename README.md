@@ -45,10 +45,10 @@ $ aacli "analyze the sales data and export insights report"
 ```
 
 **Generated Chart:**
-![Analytics Chart](assets/sample-chart.png)
+<img src="assets/sample-chart.png" alt="Analytics Chart" width="600">
 
 **Generated Report:**
-![Insights Report](assets/sample-report.png)
+<img src="assets/sample-report.png" alt="Insights Report" width="500">
 
 *Real outputs generated in seconds - interactive charts and comprehensive analysis reports*
 
