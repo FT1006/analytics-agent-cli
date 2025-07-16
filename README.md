@@ -2,47 +2,38 @@
 
 An analytics agent that understands plain English, analyzes your real data locally, and integrates directly into your existing workflow.
 
-**Not another analytics tool** – Skip SQL and custom syntax; just ask questions naturally.
-**Not another chatbot** – Actually performs real analytics operations on your data.
-**Not another web app** – Works directly with your local files and folders.
+## The Problem
 
-**Before:** Export data → Upload to ChatGPT → Manually implement suggested analysis → Visualize results yourself
-**After:** Run in your local folder: `> What drives order value? Show me a chart.`
+Every data analyst knows this workflow:
 
-## Why This Matters
+1. Export data from your system
+2. Upload to ChatGPT or Claude
+3. Get analysis suggestions
+4. Manually implement the code
+5. Debug, iterate, visualize
+6. Copy results back to your report
 
-Traditional analytics tools force translation from business questions into code. Generic LLM chatbots discuss data without truly analyzing it.
+**Analytics Agent CLI eliminates these manual steps** by creating an AI agent that actually performs the analysis in your local environment.
 
-Analytics Agent CLI introduces a new paradigm: **real-world analytics operations through natural conversation**.
-
-### Imagine a future where:
-
-* **Product managers** explore data without learning SQL.
-* **Analysts** validate logic interactively before building pipelines.
-* **Engineers** receive clear, pre-validated analytics requirements.
-
-This working prototype demonstrates that future today.
-
-## Local Integration Advantages
-
-* **Direct File Access** – No data copying between tools.
-* **Real Workflow Integration** – Results saved directly in your project folders.
-* **Controlled Data Exposure** – You precisely select data for analysis.
-* **Developer-Friendly** – Fully terminal-based, integrates seamlessly into existing workflows.
-
-## Example Usage
+## What This Does
 
 ```bash
 $ cd sample_data
-$ aacli "load ecommerce_orders.json as 'sales' then create a bar chart showing average order value by customer_segment"
+$ aacli "What drives order value in this dataset? Show me the relationships."
 
--> I have loaded the data and created a bar chart showing the average order value by customer segment. 
-   Chart saved: outputs/charts/chart_sales_bar_customer_segment.html
+-> Loading ecommerce_orders.json...
+-> Analyzing correlations between order_value and other variables...
+-> Found strong correlation (0.84) with customer_lifetime_value
+-> Creating visualization...
+✓ Chart saved: outputs/charts/order_drivers_analysis.html
 
-$ aacli "analyze the sales data and export insights report"
+$ aacli "Create a report summarizing key insights"
 
--> Insights report exported to: outputs/reports/insights_sales.html
+-> Generating comprehensive analysis...
+✓ Report exported: outputs/reports/insights_orders.html
 ```
+
+**Real outputs from actual execution** - not suggestions or code snippets.
 
 **Generated Chart:**
 
@@ -52,7 +43,69 @@ $ aacli "analyze the sales data and export insights report"
 
 <img src="assets/sample-report.png" alt="Insights Report" width="500">
 
-*Real outputs generated in seconds - interactive charts and comprehensive analysis reports*
+## How It Works
+
+The AI agent (powered by Google Gemini) translates natural language requests into function calls:
+
+- **Function Calling**: Gemini maps user requests to appropriate functions from 57 available operations
+- **Data Operations**: Load datasets (CSV/JSON), perform statistical analysis, create visualizations
+- **Session Memory**: Loaded datasets persist across conversation turns in the working directory
+- **File Validation**: Checks file paths and permissions before operations
+- **Structured Outputs**: Returns analysis results, charts (HTML), and reports in organized formats
+
+## Key Capabilities
+
+### Data Analysis Functions (36 operations)
+
+- **Load & Manage Data**: Import CSV/JSON files, list loaded datasets, merge multiple sources
+- **Statistical Analysis**: Find correlations, detect outliers, calculate feature importance
+- **Visualizations**: Create charts (bar, scatter, line, histogram), generate dashboards
+- **Segmentation**: Group data by categories, analyze distributions, time series analysis
+- **Quality Checks**: Validate data quality, identify missing values, memory optimization
+- **Custom Analysis**: Execute Python code against datasets in sandboxed environment
+
+### Excel Automation (16 operations)
+
+- **Workbook Management**: Create/open workbooks, add worksheets, read/write data
+- **Formatting**: Apply cell styles, create formulas, manage ranges
+- **Advanced Features**: Create pivot tables, charts within Excel, conditional formatting
+
+### Intelligent Guidance (9 prompts)
+
+- **Adaptive Assistance**: Get analysis suggestions based on your dataset structure
+- **Workflow Guidance**: Step-by-step help for correlations, segmentation, quality assessment
+- **Audience-Specific**: Dashboard design for executives vs analysts vs operational teams
+- **Discovery Support**: Find available data sources, explore patterns systematically
+
+### File Operations (5 operations)
+
+- **Safe Access**: Read/write files with path validation
+- **Code Execution**: Run Python scripts with timeout protection
+- **Content Discovery**: List files in directories with pattern matching
+
+## 🏗️ Project Architecture
+
+```
+analytic-agent-cli/
+├── staffer/                    # Core agent engine
+│   ├── functions/             # Function implementations
+│   │   ├── analytics/         # 36 analytics functions (tools/resources/prompts)
+│   │   ├── excel/            # 16 Excel automation functions  
+│   │   └── file_ops/         # 5 file system operations
+│   ├── function_registries/   # Dynamic function discovery & registration
+│   ├── cli/                  # Command line interface
+│   └── available_functions.py # LLM integration & monitoring layer
+└── sample_data/              # Example datasets for testing
+```
+
+**Key Design Decisions:**
+
+- Type-safe function orchestration prevents runtime errors
+- Smart serialization handles complex data structures
+- Defensive programming ensures graceful error handling
+- Session persistence maintains analytical context
+
+**[→ Read the detailed Technical Architecture](docs/ARCHITECTURE.md)**
 
 ## Quick Start
 
@@ -70,48 +123,31 @@ cd examples/ecommerce_analytics
 aacli
 ```
 
-## 🏗️ Project Architecture
+## Example Use Cases
+
+**Data Quality Assessment:**
 
 ```
-analytic-agent-cli/
-├── staffer/                    # Core agent engine
-│   ├── functions/             # Function implementations
-│   │   ├── analytics/         # 36 analytics functions (tools/resources/prompts)
-│   │   ├── excel/            # 16 Excel automation functions  
-│   │   └── file_ops/         # 5 file system operations
-│   ├── function_registries/   # Dynamic function discovery & registration
-│   ├── cli/                  # Command line interface
-│   └── available_functions.py # LLM integration & monitoring layer
-└── sample_data/              # Example datasets for testing
+> Check for data quality issues and suggest fixes
 ```
 
-**[→ Read the detailed Technical Architecture](docs/ARCHITECTURE.md)**
+**Business Analysis:**
 
-## How It Fits Your Workflow
+```
+> Segment customers by purchase behavior and visualize the differences  
+```
 
-* **Explore quickly** – Validate analytical ideas in minutes.
-* **Stakeholder alignment** – Discuss clear analytics insights in plain English.
-* **Rapid deployment** – Confidently implement validated logic in production tools (Airflow, dbt, Alteryx).
+**Statistical Investigation:**
 
-## Common Commands
+```
+> Find factors that correlate with customer churn
+```
 
-**Data Quality Checks:**
+**Report Generation:**
 
-* `> check data quality issues`
-* `> summarize distribution of order values`
-* `> identify outliers`
-
-**Analytical Queries:**
-
-* `> correlate features with sales`
-* `> segment customers by behavior`
-* `> compare month-over-month performance`
-
-**Visualization & Reporting:**
-
-* `> generate a trend chart`
-* `> export insights as HTML`
-* `> provide statistical summary`
+```
+> Create an executive summary with key metrics and trends
+```
 
 ## Requirements
 
@@ -120,13 +156,3 @@ analytic-agent-cli/
 * Optional enhancements: pandas, openpyxl
 
 **Note**: Currently supports Google Gemini API only.
-
-## 🚀 Future Updates
-
-- **Subagent capability** - Parallel execution; specialised agents spawning
-- **MCP server support** - Integration with Model Context Protocol ecosystem
-- **Database connectivity** - Direct BigQuery, Snowflake, and PostgreSQL support
-
-## Project History
-
-Analytics Agent CLI evolved from [Staffer](https://github.com/FT1006/staffer), a personal project exploring AI-powered workflow automation. This version focuses specifically on analytics capabilities and local file integration, representing a specialized branch of the original concept.
